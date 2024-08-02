@@ -1,0 +1,642 @@
+{
+  "swagger": "2.0",
+  "basePath": "/",
+  "paths": {
+    "/device/delete/{macAddress}": {
+      "parameters": [
+        {
+          "name": "macAddress",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "디바이스 삭제",
+        "operationId": "delete_delete_device_resource",
+        "tags": [
+          "device"
+        ]
+      }
+    },
+    "/device/devices": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "모든 디바이스 조회",
+        "operationId": "get_device_resource",
+        "tags": [
+          "device"
+        ]
+      }
+    },
+    "/device/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "디바이스 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeviceModel"
+            }
+          }
+        ],
+        "tags": [
+          "device"
+        ]
+      }
+    },
+    "/room/delete/{roomId}": {
+      "parameters": [
+        {
+          "name": "roomId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "호실 삭제",
+        "operationId": "delete_delete_room_resource",
+        "tags": [
+          "room"
+        ]
+      }
+    },
+    "/room/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "호실 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RoomModel"
+            }
+          }
+        ],
+        "tags": [
+          "room"
+        ]
+      }
+    },
+    "/room/rooms": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "모든 호실 조회",
+        "operationId": "get_room_resource",
+        "tags": [
+          "room"
+        ]
+      }
+    },
+    "/user/delete/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저 삭제",
+        "operationId": "delete_delete_user_resource",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserModel"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/update/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저 정보 수정",
+        "operationId": "put_update_user_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserModel"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "모든 유저 조회",
+        "operationId": "get_user_resource",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저 조회",
+        "operationId": "get_get_user_resource",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user_device/delete/{userId}/{macAddress}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "macAddress",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 디바이스 삭제",
+        "operationId": "delete_delete_user_device_resource",
+        "tags": [
+          "user_device"
+        ]
+      }
+    },
+    "/user_device/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 디바이스 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserDeviceModel"
+            }
+          }
+        ],
+        "tags": [
+          "user_device"
+        ]
+      }
+    },
+    "/user_device/user_devices": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "모든 유저 디바이스 조회",
+        "operationId": "get_user_device_resource",
+        "tags": [
+          "user_device"
+        ]
+      }
+    },
+    "/user_device/user_devices/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저의 디바이스 조회",
+        "operationId": "get_get_user_device_resource",
+        "tags": [
+          "user_device"
+        ]
+      }
+    },
+    "/user_room/delete/{roomId}": {
+      "parameters": [
+        {
+          "name": "roomId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 호실의 유저 삭제",
+        "operationId": "delete_delete_room_resource",
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/delete/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저의 호실 삭제",
+        "operationId": "delete_delete_user_resource",
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저의 호실 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserRoomModel"
+            }
+          }
+        ],
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/update/{roomId}": {
+      "parameters": [
+        {
+          "name": "roomId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 호실의 유저 수정",
+        "operationId": "put_update_room_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserRoomModel"
+            }
+          }
+        ],
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/update/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저의 호실 수정",
+        "operationId": "put_update_user_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserRoomModel"
+            }
+          }
+        ],
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/user_rooms": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "모든 유저의 호실 조회",
+        "operationId": "get_user_room_resource",
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/user_rooms/{roomId}": {
+      "parameters": [
+        {
+          "name": "roomId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 호실의 유저 조회",
+        "operationId": "get_get_room_resource",
+        "tags": [
+          "user_room"
+        ]
+      }
+    },
+    "/user_room/user_rooms/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 유저의 호실 조회",
+        "operationId": "get_get_user_resource",
+        "tags": [
+          "user_room"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "API Document",
+    "version": "1.0",
+    "description": "Check the REST API specification."
+  },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "user",
+      "description": "User API"
+    },
+    {
+      "name": "room",
+      "description": "Room API"
+    },
+    {
+      "name": "user_room",
+      "description": "User Room API"
+    },
+    {
+      "name": "device",
+      "description": "Device API"
+    },
+    {
+      "name": "user_device",
+      "description": "User Device API"
+    }
+  ],
+  "definitions": {
+    "UserModel": {
+      "required": [
+        "Birth",
+        "userId",
+        "userName"
+      ],
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "User ID"
+        },
+        "userName": {
+          "type": "string",
+          "description": "User Name"
+        },
+        "Birth": {
+          "type": "string",
+          "format": "date",
+          "description": "Birth"
+        }
+      },
+      "type": "object"
+    },
+    "RoomModel": {
+      "required": [
+        "roomId"
+      ],
+      "properties": {
+        "roomId": {
+          "type": "integer",
+          "description": "Room ID"
+        }
+      },
+      "type": "object"
+    },
+    "UserRoomModel": {
+      "required": [
+        "roomId",
+        "userId"
+      ],
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "User ID"
+        },
+        "roomId": {
+          "type": "integer",
+          "description": "Room ID"
+        }
+      },
+      "type": "object"
+    },
+    "DeviceModel": {
+      "required": [
+        "macAddress"
+      ],
+      "properties": {
+        "macAddress": {
+          "type": "string",
+          "description": "Mac Address"
+        }
+      },
+      "type": "object"
+    },
+    "UserDeviceModel": {
+      "required": [
+        "macAddress",
+        "userId"
+      ],
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "User ID"
+        },
+        "macAddress": {
+          "type": "string",
+          "description": "Mac Address"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "responses": {
+    "ParseError": {
+      "description": "When a mask can't be parsed"
+    },
+    "MaskError": {
+      "description": "When any error occurs on mask"
+    }
+  }
+}
