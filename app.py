@@ -8,8 +8,7 @@ from API import *
 
 # Dash Import
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 from dash.dependencies import Input, Output
 from templates.administrator.main import admin_app
 

@@ -6,38 +6,39 @@ import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output
 
-# Define the layout
-# Define the layout
-login_layout = html.Div([
-    dbc.Container(
-        [
-            html.H2("Hello Again!", className="text-center my-4"),
-            html.P("Welcome Back", className="text-center mb-4"),
-            dbc.Row(
-                dbc.Col([
-                    dbc.InputGroup(
-                        [
-                            dbc.InputGroupText(html.Img(src="/static/icon_mail.png", height="24px")),  # Removed addon_type
-                            dbc.Input(type="email", placeholder="Email Address", className="py-3"),
-                        ],
-                        className="mb-4",
-                        style={"maxWidth": 400}
+
+def login_layout():
+    return html.Div([
+        html.Div([
+            dbc.Container(
+                [
+                    html.H2("Hello Again!", className="text-center my-4"),
+                    html.P("Welcome Back", className="text-center mb-4"),
+                    dbc.Row(
+                        dbc.Col([
+                            dbc.InputGroup(
+                                [
+                                    dbc.InputGroupText(html.Img(src="/static/icon_mail.png", height="24px")),
+                                    dbc.Input(type="email", placeholder="Email Address", className="py-3"),
+                                ],
+                                className="mb-4",
+                            ),
+                            dbc.InputGroup(
+                                [
+                                    dbc.InputGroupText(html.Img(src="/static/icon_lock.png", height="24px")),
+                                    dbc.Input(type="password", placeholder="Password", className="py-3"),
+                                ],
+                                className="mb-4",
+                            ),
+                            dbc.Button("Login", color="primary", className="button-login"),
+                            html.Div([
+                                dbc.Button("회원가입", href="/admin/signup", className="button-secondary"),
+                                dbc.Button("비밀번호 찾기", className="button-link"),
+                            ], className="button-container")
+                        ]),
                     ),
-                    dbc.InputGroup(
-                        [
-                            dbc.InputGroupText(html.Img(src="/static/icon_lock.png", height="24px")),  # Removed addon_type
-                            dbc.Input(type="password", placeholder="Password", className="py-3"),
-                        ],
-                        className="mb-3",
-                        style={"maxWidth": 400}
-                    ),
-                    dbc.Button("Login", color="primary", className="w-100 mb-3", style={"maxWidth": 400}),
-                    dbc.Button("Forgot Password", color="link", className="w-100", style={"maxWidth": 400}),
-                ], width=12, className="offset-md-0"),
-            ),
-        ],
-        fluid=True,
-        className="py-5",
-        style={"height": "100vh", "display": "flex", "flexDirection": "column", "justifyContent": "center"}
-    )
-], className="bg-white")
+                ],
+                className="container text-center"
+            )
+        ], className="full-screen-container")
+    ])
