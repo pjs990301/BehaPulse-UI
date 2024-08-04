@@ -12,32 +12,32 @@ def signup_layout():
     return html.Div([
         dbc.Container(
             [
-                html.H2("Hello!", className="text-center mt-5"),
+                html.H2("Hello!", className="text-center my-4"),
                 html.P("Sign Up to Get Started", className="text-center mb-4"),
-                dbc.Form([
-                    dbc.InputGroup(
-                        [
-                            dbc.InputGroupText(html.I(className="fas fa-user"), className="bg-white border-right-0"),
-                            dbc.Input(type="text", placeholder="Full Name", className="border-left-0"),
-                        ],
-                        className="mb-3 shadow-sm", # Adds shadow for depth
-                    ),
-                    dbc.InputGroup(
-                        [
-                            dbc.InputGroupText(html.I(className="fas fa-envelope"), className="bg-white border-right-0"),
-                            dbc.Input(type="email", placeholder="Email Address", className="border-left-0"),
-                        ],
-                        className="mb-3 shadow-sm",
-                    ),
-                    dbc.InputGroup(
-                        [
-                            dbc.InputGroupText(html.I(className="fas fa-lock"), className="bg-white border-right-0"),
-                            dbc.Input(type="password", placeholder="Password", className="border-left-0"),
-                        ],
-                        className="mb-4 shadow-sm",
-                    ),
-                    dbc.Button("Register", color="primary", className="w-100 shadow-sm"),
-                ]),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText(html.I(className="fas fa-user fa-lg"), className="bg-white border-right-0"),
+                        dbc.Input(type="text", placeholder="Full Name", className="py-3"),
+                    ],
+                    className="mb-4 shadow-sm",
+                ),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText(html.I(className="fas fa-envelope fa-lg"),
+                                           className="bg-white border-right-0"),
+                        dbc.Input(type="email", placeholder="Email Address", className="py-3"),
+                    ],
+                    className="mb-4 shadow-sm",
+                ),
+                dbc.InputGroup(
+                    [
+                        dbc.InputGroupText(html.I(className="fas fa-lock fa-lg"), className="bg-white border-right-0"),
+                        dbc.Input(type="password", placeholder="Password", className="py-3"),
+                    ],
+                    className="mb-4 shadow-sm",
+                ),
+                dbc.Button("Register", color="primary", className="w-100 shadow-sm"),
+
             ],
             className="my-5 p-3",
             style={"maxWidth": "400px"}

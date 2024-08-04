@@ -64,3 +64,11 @@
     display: flex;
     justify-content: space-between;
 }
+
+#fa-envelope, #fa-lock {
+    color: #6c757d; !important;
+}
+
+i.fas{
+    color: #6c757d; !important;
+}

@@ -18,17 +18,17 @@ def login_layout():
                         dbc.Col([
                             dbc.InputGroup(
                                 [
-                                    dbc.InputGroupText(html.Img(src="/static/icon_mail.png", height="24px")),
+                                    dbc.InputGroupText(html.I(className="fas fa-envelope fa-lg")),
                                     dbc.Input(type="email", placeholder="Email Address", className="py-3"),
                                 ],
-                                className="mb-4",
+                                className="mb-4 shadow-sm",
                             ),
                             dbc.InputGroup(
                                 [
-                                    dbc.InputGroupText(html.Img(src="/static/icon_lock.png", height="24px")),
+                                    dbc.InputGroupText(html.I(className="fas fa-lock fa-lg")),
                                     dbc.Input(type="password", placeholder="Password", className="py-3"),
                                 ],
-                                className="mb-4",
+                                className="mb-4 shadow-sm",
                             ),
                             dbc.Button("Login", color="primary", className="button-login"),
                             html.Div([
