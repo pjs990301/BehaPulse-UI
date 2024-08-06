@@ -12,15 +12,16 @@ from .topbar import topbar
 def main_layout():
     layout = dbc.Container([
         dbc.Row([
-            dbc.Col(sidebar(), width=1, style={'border-right': '1px solid #ccc'},
+            dbc.Col(sidebar(), width=2, style={'border-right': '1px solid #ccc'},
                     className="d-flex flex-column justify-content-between vh-100"),
             dbc.Col([
                 topbar(),
+                html.Hr(),
                 html.Div(
                     id="page-content",
-                    style={"background-color": "rgba(82, 128, 255, 0.08)", "height": "100%", "overflow-y": "hidden"}
+                    style={"height": "100%", "overflow-y": "hidden"}
                 )
-            ], width=11, className="d-flex flex-column justify-content-between vh-100 p-0")
+            ], width=10, className="d-flex flex-column justify-content-between vh-100 p-0")
         ])
     ], fluid=True, className="vh-100")
 

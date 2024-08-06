@@ -11,17 +11,14 @@ def topbar():
     return html.Div(
         [
             dbc.Row(
-                [
-                    dbc.Col([dbc.Col(html.H3("Hello Kruluz Utsman", className=""), width="auto"),
-                             dbc.Col(html.Small("4:45 pm 19 Jan 2022", className="mb-2"), width="auto"),
-                             ]),
+                # 검색창
+                dcc.Input(id='search-input', type='text', placeholder='Search...', className='form-control',
+                          style={'width': '50%', 'margin-left': '4rem'}),
+                # 프로필 이미지
 
-                    dbc.Col(html.I(className="fas fa-users"), width="auto")
-                ],
-                justify="between",
-                align="center",
+                # 드롭다운
 
             ),
 
-        ], className="m-4"
+        ], className="m-3"
     )

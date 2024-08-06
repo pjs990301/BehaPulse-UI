@@ -10,18 +10,27 @@ from dash.dependencies import Input, Output
 def home_layout():
     return html.Div(
         dbc.Container([
-            # html.H2("Home!", className="my-4"),
-            # html.P("Sign Up to Get Started", className="mb-4"),
-            # Add more content elements as needed
             dbc.Row(
                 [
-                    dbc.Col([html.I(className="fas fa-house-user fa-lg m-3"), "즐겨찾기"],
-                            style={"font-size": "1.5em"},
-                            ),
-                    dbc.Col(dbc.Button("Edit Tutor", color="primary", className="mr-1"), width={"size": 3, "offset": 2},
-                            align="end")
+                    dbc.Col(
+                        html.H2("즐겨찾기", className=""),
+                    ),
                 ],
+            ),
+            dbc.Row(
+                dbc.Col(
+                    dbc.Card([
+                        dbc.CardHeader('Card Title'),
+                        dbc.CardBody([
+                            html.H5('Card Title', className='card-title'),
+                            html.P('This is an example of a card with Dash Bootstrap Components.',
+                                   className='card-text')
+                        ])
+                    ]),
+                    width=3
+                ),
+                # justify='center'
             )
         ],
-            className="mt-5 mx-3")
+            className="mt-3 mx-3")
     )

@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="esp32-csi" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="esp32-csi" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (csi-visualization-web)" project-jdk-type="Python SDK" />
 </project>
