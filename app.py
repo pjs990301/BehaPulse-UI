@@ -10,7 +10,7 @@ from API import *
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
-from templates.administrator.main import admin_app
+from templates.administrator.app import admin_app
 
 
 app = Flask(__name__)
@@ -25,6 +25,7 @@ api.add_namespace(room_ns)
 api.add_namespace(user_room_ns)
 api.add_namespace(device_ns)
 api.add_namespace(user_device_ns)
+api.add_namespace(admin_ns)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

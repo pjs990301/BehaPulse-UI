@@ -1,0 +1,14 @@
+.button-link {
+    width: 49%;
+    color: #6c757d;
+    background-color: transparent;
+    border: none;
+    outline: none !important;
+}
+
+.button-link:hover, .button-link:focus, .button-link:active {
+    color: #6c757d !important;
+    background-color: transparent !important;
+    outline: none !important;
+    border: none !important;
+}

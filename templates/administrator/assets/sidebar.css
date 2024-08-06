@@ -1,0 +1,8 @@
+/* Style for normal nav links */
+.custom-navlink {
+    color: #333; /* Dark grey text for normal state */
+    /*background-color: #fff; !* White background for normal state *!*/
+    padding: 0.5rem 1rem;
+    display: block;
+    transition: color 0.3s, background-color 0.3s;
+}
