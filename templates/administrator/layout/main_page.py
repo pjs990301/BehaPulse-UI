@@ -12,7 +12,7 @@ from .topbar import topbar
 def main_layout():
     layout = dbc.Container([
         dbc.Row([
-            dbc.Col(sidebar(), width=1, style={'border-right': '1px solid #ccc'},
+            dbc.Col(sidebar(), width=1, style={'border-right': '2px solid #ccc'},
                     className="d-flex flex-column justify-content-between vh-100"),
             dbc.Col([
                 topbar(),

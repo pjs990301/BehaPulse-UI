@@ -26,6 +26,5 @@ def sidebar():
                 vertical=True,
                 pills=True,
             ),
-
         ], style={"height": "100vh"}
     )

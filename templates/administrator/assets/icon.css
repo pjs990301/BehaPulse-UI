@@ -1,0 +1,8 @@
+.input-group-text .fas {
+    font-size: 1.25rem;  /* 아이콘 크기 조정 */
+    width: 2rem;        /* 아이콘 컨테이너 너비 조정 */
+    height: 2rem;       /* 아이콘 컨테이너 높이 조정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
