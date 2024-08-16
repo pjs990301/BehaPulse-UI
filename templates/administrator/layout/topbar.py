@@ -7,24 +7,6 @@ import pandas as pd
 from dash.dependencies import Input, Output
 
 
-# def topbar():
-#     return html.Div(
-#         [
-#             dbc.Row(
-#                 [
-#                     dbc.Col([dbc.Col(html.H3("Hello Kruluz Utsman", className=""), width="auto"),
-#                              dbc.Col(html.Small("4:45 pm 19 Jan 2022", className="mb-2"), width="auto"),
-#                              ]),
-#
-#                     dbc.Col(html.I(className="fas fa-users"), width="auto")
-#                 ],
-#                 justify="between",
-#                 align="center",
-#             ),
-#
-#         ], className="m-4"
-#     )
-
 def topbar():
     return html.Div(
         dbc.Container([
