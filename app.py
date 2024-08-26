@@ -2,6 +2,7 @@
 import json
 from flask import Flask, session
 from flask_restx import Api, Resource, reqparse, Namespace
+from flask_cors import CORS
 
 # Namespace Import
 from API import *
@@ -14,6 +15,8 @@ from templates.page.app import admin_app
 
 
 app = Flask(__name__)
+CORS(app)  # To handle CORS issues between Flask and Dash
+
 app.secret_key = "BehaPulse"
 api = Api(app, version='1.0', title='API Document', description='Check the REST API specification.', doc='/doc/')
 admin_app.init_app(app)
@@ -25,6 +28,7 @@ api.add_namespace(device_ns)
 api.add_namespace(user_device_ns)
 api.add_namespace(dashboard_ns)
 api.add_namespace(user_dashboard_ns)
+api.add_namespace(user_dashboard_device_ns)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

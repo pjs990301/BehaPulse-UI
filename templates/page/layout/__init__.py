@@ -8,6 +8,7 @@ from .content import *
 from dash import no_update, callback_context, State
 
 url_to_layout = {
+    '/': login_layout,
     '/admin/': login_layout,
     '/admin/signup': signup_layout,
     '/admin/password': find_password_layout,

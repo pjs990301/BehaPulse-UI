@@ -47,19 +47,22 @@ def dashboard_controller(app):
                                     dashboard_data.get('status', 'Unknown')
                                 ))
                             else:
-                                cards.append(
-                                    create_dashboard_card(person_id, 'Unknown', 'Unknown', 'Unknown', 'Unknown'))
+                                # cards.append(
+                                #     create_dashboard_card(person_id, 'Unknown', 'Unknown', 'Unknown', 'Unknown'))
+                                cards.append([])
                         except requests.exceptions.RequestException as e:
-                            cards.append(
-                                create_dashboard_card(person_id, 'Unknown', 'Unknown', 'Unknown', 'Unknown'))
+                            # cards.append(
+                            #     create_dashboard_card(person_id, 'Unknown', 'Unknown', 'Unknown', 'Unknown'))
+                            cards.append([])
 
                     return cards
 
                 else:
-                    return [create_dashboard_card(0, 'Unknown', 'Unknown', 'Unknown', 'Unknown')]
-
+                    # return [create_dashboard_card(0, 'Unknown', 'Unknown', 'Unknown', 'Unknown')]
+                    return []
             except requests.exceptions.RequestException as e:
-                return [create_dashboard_card(0, 'Unknown', 'Unknown', 'Unknown', 'Unknown')]
+                # return [create_dashboard_card(0, 'Unknown', 'Unknown', 'Unknown', 'Unknown')]
+                return []
 
     @app.callback(
         Output('url', 'pathname', allow_duplicate=True),
@@ -110,9 +113,11 @@ def dashboard_controller(app):
 
                     return detail_row
                 else:
-                    return detail_row.append(create_person_detail_row("No Unknown found", "Unknown Person"))
+                    # return detail_row.append(create_person_detail_row("No Unknown found", "Unknown Person"))
+                    return detail_row.append([])
             except requests.exceptions.RequestException as e:
-                return detail_row.append(create_person_detail_row("No Unknown found", "Unknown Person"))
+                # return detail_row.append(create_person_detail_row("No Unknown found", "Unknown Person"))
+                return detail_row.append([])
         else:
             # update 하지 않기
             raise PreventUpdate
@@ -140,9 +145,11 @@ def dashboard_controller(app):
 
                     return edit_row
                 else:
-                    return edit_row.append(create_person_edit_row("No Unknown found", "Unknown Person"))
+                    # return edit_row.append(create_person_edit_row("No Unknown found", "Unknown Person"))
+                    return edit_row.append([])
             except requests.exceptions.RequestException as e:
-                return edit_row.append(create_person_edit_row("No Unknown found", "Unknown Person"))
+                # return edit_row.append(create_person_edit_row("No Unknown found", "Unknown Person"))
+                return edit_row.append([])
 
         else:
             # update 하지 않기
@@ -323,3 +330,31 @@ def dashboard_controller(app):
                 return "Unknown Person", "0000년 00월 00일 00:00:00"
         else:
             raise PreventUpdate
+
+    # @app.callback(
+    #     [Output('live-graph', 'figure'),
+    #      Output('live-stats', 'children')],
+    #     [Input('graph-update', 'n_intervals')]
+    # )
+    # def update_graph(n_intervals):
+    #     if mac_address_to_visualize in csi_data_dict:
+    #         amp_data = np.array(csi_data_dict[mac_address_to_visualize]['amp'])
+    #         if amp_data.size > 0:
+    #             x_data = list(range(100 - len(amp_data), 100))
+    #             y_data = amp_data[:, 44]  # Example: plotting subcarrier 44
+    #
+    #             figure = {
+    #                 'data': [{'x': x_data, 'y': y_data, 'type': 'line', 'line': {'color': 'red'}}],
+    #                 'layout': {
+    #                     'title': f'Amplitude of Subcarrier 44 for MAC {mac_address_to_visualize}',
+    #                     'xaxis': {'title': 'Time'},
+    #                     'yaxis': {'title': 'Amplitude'},
+    #                     'xaxis': {'range': [0, 100]},
+    #                 }
+    #             }
+    #
+    #             stats_text = f"Total packets processed for {mac_address_to_visualize}: {len(amp_data)}"
+    #
+    #             return figure, stats_text
+    #
+    #     return {}, "No data available"

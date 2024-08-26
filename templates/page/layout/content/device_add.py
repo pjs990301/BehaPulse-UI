@@ -78,6 +78,38 @@ def create_detail_on_off(label, on_style, off_style):
     ], className="my-2 justify-content-center align-items-center")
 
 
+def create_add_person_row(label, value):
+    return dbc.Row([
+        dbc.Col(
+            html.Div(label, className="text-center", style={
+                'font-size': '1rem',
+                'background-color': 'None',
+                'border': 'None',
+                'color': 'white',
+                'width': '100%',
+                'height': '5vh',
+                'display': 'flex',
+                'align-items': 'center',
+                'justify-content': 'center'
+
+            }),
+            width=3, className="d-flex justify-content-center mt-2 p-0"
+        ),
+        dbc.Col(
+            dcc.Dropdown(
+                className="text-center device-dropdown",
+                id='device-add-person-dropdown',
+                placeholder="사용자선택",
+                # style={
+                # },
+                options=[
+                    # {'label': label, 'value': value}
+                ]
+            ),
+            width=8, className="justify-content-center mt-2 p-0 mx-2")
+    ], className="my-2 justify-content-center align-items-center")
+
+
 def device_add_layout():
     return html.Div(
         [
@@ -98,31 +130,41 @@ def device_add_layout():
                 ], className="align-items-center justify-content-center mt-1"),
 
                 dbc.Row([
-                    dbc.Row(className='mt-3 p-0 align-items-center', id="device-add-row",
-                            style={'width': '100%', 'flex-wrap': 'wrap', 'justify-content': 'center'}),
-
-                    create_detail_row_add("장치명", ""),
-                    create_detail_row_add("Mac 주소", ""),
-                    create_detail_row_add("설치 장소", ""),
-                    create_detail_row_add("호실", ""),
-                    create_detail_row_add("점검일", ""),
-                    create_detail_on_off("활성화 상태",
-                                         on_style={
-                                             'cursor': 'pointer',
-                                             'color': 'white',
-                                             'font-size': '1rem',
-                                             'padding': '0px 20px'
-                                         },
-                                         off_style={
-                                             'cursor': 'pointer',
-                                             'color': 'white',
-                                             'font-size': '1rem',
-                                             'padding': '0px 20px'
-                                         }),
-                    create_detail_row_add("기타사항", ""),
+                    dcc.Loading(
+                        id="loading-spinner",
+                        type="default",  # 다른 스피너 유형을 원할 경우 변경 가능
+                        children=[
+                            dbc.Row(
+                                [
+                                    create_detail_row_add("장치명", ""),
+                                    create_detail_row_add("Mac 주소", ""),
+                                    create_detail_row_add("설치 장소", ""),
+                                    create_detail_row_add("호실", ""),
+                                    create_detail_row_add("점검일", ""),
+                                    create_detail_on_off("활성화 상태",
+                                                         on_style={
+                                                             'cursor': 'pointer',
+                                                             'color': 'white',
+                                                             'font-size': '1rem',
+                                                             'padding': '0px 20px'
+                                                         },
+                                                         off_style={
+                                                             'cursor': 'pointer',
+                                                             'color': 'white',
+                                                             'font-size': '1rem',
+                                                             'padding': '0px 20px'
+                                                         }),
+                                    create_detail_row_add("기타사항", ""),
+                                    create_add_person_row("사용자", ""),
+                                ],
+                                className='mt-3 p-0 align-items-center', id="device-add-row",
+                                style={'flex-wrap': 'wrap', 'justify-content': 'center'}
+                            ),
+                        ]
+                    ),
 
                     # Spacer div to push the button to the bottom
-                    html.Div(style={'flex-grow': '1'}),
+                    dbc.Row(style={'flex-grow': '1'}),
 
                     dbc.Col(
                         [
@@ -137,7 +179,8 @@ def device_add_layout():
                         ], className="d-flex justify-content-end align-items-center"
                     )
                 ], className="mt-3 mx-1 p-2 justify-content-between",
-                    style={'background-color': 'rgba(143, 168, 250, 0.59)', 'height': '70vh', 'border-radius': '10px',
+                    style={'background-color': 'rgba(143, 168, 250, 0.59)', 'height': '75vh',
+                           'border-radius': '10px',
                            'display': 'flex', 'flex-direction': 'column', 'align-items': 'center',
                            }),
             ], className="p-2", fluid=True)

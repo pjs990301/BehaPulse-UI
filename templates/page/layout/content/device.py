@@ -29,7 +29,7 @@ def create_device_card(device_name, mac_address, status):
                              ),
                 ], width=3, style={'font-size': '1rem', 'color': status_color}, className='text-center p-0')
             ]),
-        ], style={'flex': '0 0'}),
+        ], style={'flex': '0 0', 'padding': '0.5rem'}),
         style={'background-color': '#8FA8FA', 'border-radius': '20px', 'margin-bottom': '10px', 'height': '5vh',
                'justify-content': 'center', 'border': 'None', 'width': '100%'}
     )
@@ -70,7 +70,7 @@ def device_layout():
                     id="loading-spinner",
                     type="default",  # 다른 스피너 유형을 원할 경우 변경 가능
                     children=dbc.Row(className='mt-3 p-0 align-items-center', id="device-cards-row",
-                                     style={'width': '100%', 'flex-wrap': 'wrap', 'justify-content': 'center'}),
+                                     style={'flex-wrap': 'wrap', 'justify-content': 'center'}),
                 ),
 
                 dbc.Row(style={'flex-grow': '1', 'min-height': '50vh'}),

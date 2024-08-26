@@ -49,13 +49,24 @@ def dashboard_detail_layout():
             dbc.Row([
                 html.H1("홍길동",
                         id='dashboard-detail-name',
-                        style={'font-size': '1.5rem', 'color': 'black', 'margin-top': '20px', 'text-align': 'center'}),
+                        style={'font-size': '2rem', 'color': 'black', 'margin-top': '20px', 'text-align': 'center'}),
                 html.H2("0000년 00월 00일 16:45:52",
                         id='dashboard-detail-date',
-                        style={'font-size': '1rem', 'color': 'black', 'text-align': 'center'}),
+                        style={'font-size': '1.5rem', 'color': 'black', 'text-align': 'center'}),
+                # dbc.Row([
+                #     dcc.Graph(figure=fig, config={'displayModeBar': False}, style={'height': '100%', 'width': '100%'},
+                #               className='p-0')
+                # ],
                 dbc.Row([
-                    dcc.Graph(figure=fig, config={'displayModeBar': False}, style={'height': '100%', 'width': '100%'},
-                              className='p-0')
+                    dcc.Graph(id='live-graph', animate=True,
+                              config={'displayModeBar': False},
+                              style={'height': '100%', 'width': '100%'},
+                              className='p-0'),
+                    dcc.Interval(
+                        id='graph-update',
+                        interval=200,  # Update graph every 200 milliseconds
+                        n_intervals=0
+                    ),
                 ],
                     style={'height': '30vh', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'},
                     className="my-3 p-1"
@@ -63,14 +74,15 @@ def dashboard_detail_layout():
 
                 dbc.Row([
                     html.H4("현재 행동 상태 : 앉아 있음",
-                            style={'font-size': '1.2rem', 'color': 'black', 'text-align': 'center',
+                            id = 'dashboard-detail-status',
+                            style={'font-size': '1.5rem', 'color': 'black', 'text-align': 'center',
                                    'margin-top': '10px'}),
-                    html.H4("금일 낙상 횟수 : 25500000",
-                            style={'font-size': '1.2rem', 'color': 'black', 'text-align': 'center',
-                                   'margin-top': '10px'}),
-                    html.H4("금일 누워 있던 누적 지속 시간 : 2500분 ",
-                            style={'font-size': '1.2rem', 'color': 'black', 'text-align': 'center',
-                                   'margin-top': '10px'}),
+                    # html.H4("금일 낙상 횟수 : 25500000",
+                    #         style={'font-size': '1.2rem', 'color': 'black', 'text-align': 'center',
+                    #                'margin-top': '10px'}),
+                    # html.H4("금일 누워 있던 누적 지속 시간 : 2500분 ",
+                    #         style={'font-size': '1.2rem', 'color': 'black', 'text-align': 'center',
+                    #                'margin-top': '10px'}),
                 ], className="justify-content-center align-items-center mt-4 p-1"),
 
                 html.Div(style={'flex-grow': '1'}),

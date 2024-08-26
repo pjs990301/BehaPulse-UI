@@ -69,13 +69,17 @@ def device_detail_layoout():
                 # create_detail_row("점검일", "24년 08월 08일"),
                 # create_detail_row("활성화 상태", "on"),
                 # create_detail_row("기타사항", "기기 변경 필요"),
+                dcc.Loading(
+                    id="loading-spinner",
+                    type="default",  # 다른 스피너 유형을 원할 경우 변경 가능
+                    children=[
+                        dbc.Row(className='mt-3 p-0 align-items-center', id="device-detail-row",
+                                style={'flex-wrap': 'wrap', 'justify-content': 'center'}),
+                    ]
+                    , style={'margin-top': '5vh'}
+                ),
 
-                dbc.Row(className='mt-3 p-0 align-items-center', id="device-detail-row",
-                        style={'width': '100%', 'flex-wrap': 'wrap', 'justify-content': 'center'}),
-
-                # Spacer div to push the button to the bottom
-                html.Div(style={'flex-grow': '1'}),
-
+                dbc.Row(style={'flex-grow': '1'}),
                 dbc.Col(
                     [
                         dbc.Button("수정", href="/admin/device/edit",
@@ -86,8 +90,9 @@ def device_detail_layoout():
                                    style={'font-size': '1rem', 'width': '30%', 'margin-left': '10px'}),
                     ], className="d-flex justify-content-end align-items-center"
                 )
+
             ], className="mt-3 mx-1 p-2 justify-content-between",
-                style={'background-color': 'rgba(143, 168, 250, 0.59)', 'height': '70vh', 'border-radius': '10px',
+                style={'background-color': 'rgba(143, 168, 250, 0.59)', 'height': '75vh', 'border-radius': '10px',
                        'display': 'flex', 'flex-direction': 'column', 'align-items': 'center',
                        }),
         ], className="p-2", fluid=True)

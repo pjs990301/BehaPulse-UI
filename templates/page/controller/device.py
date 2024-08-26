@@ -73,17 +73,20 @@ def device_controller(app):
                                     convert_bool_to_on_off(device_data.get('on_off', 'off'))
                                 ))
                             else:
-                                cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
+                                # cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
+                                cards.append([])
                         except requests.exceptions.RequestException as e:
-                            cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
-
+                            # cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
+                            cards.append([])
                     return cards  # 리스트로 반환
 
                 else:
-                    return [create_device_card("No devices found", "Unknown MAC", "off")]
+                    return []
+                    # return [create_device_card("No devices found", "Unknown MAC", "off")]
 
             except requests.exceptions.RequestException as e:
-                return [create_device_card("No devices found", "Unknown MAC", "off")]
+                return []
+                # return [create_device_card("No devices found", "Unknown MAC", "off")]
 
     @app.callback(
         Output('url', 'pathname', allow_duplicate=True),
@@ -113,6 +116,94 @@ def device_controller(app):
             raise PreventUpdate
 
     @app.callback(
+        Output('device-edit-person-dropdown', 'options'),
+        [Input('url', 'pathname'),
+         Input('device-edit-person-dropdown', 'search_value')]
+    )
+    def render_dropdown_detail(pathname, search_value):
+        if pathname == '/admin/device/edit':
+            user_email = session.get('user_email')
+            api_url = f"http://192.9.200.141:8000/user_dashboard/user_dashboards/{user_email}"
+
+            try:
+                response = requests.get(api_url)
+
+                if response.status_code == 200:
+                    user_dashboards = response.json().get('dashboards', [])
+                    dropdown_options = []
+
+                    for dashboard in user_dashboards:
+                        person_id = dashboard[1]
+                        dashboard_api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+
+                        try:
+                            dashboard_response = requests.get(dashboard_api_url)
+                            if dashboard_response.status_code == 200:
+                                dashboard_data = dashboard_response.json().get('dashboard', {})
+                                user_name = dashboard_data.get('name', 'Unknown Person')
+                                dropdown_options.append({'label': user_name, 'value': person_id})
+
+                        except requests.RequestException as e:
+                            print(f"Error fetching dashboard data: {e}")
+
+                    return dropdown_options
+
+                else:
+                    print(f"Failed to fetch user dashboards: {response.status_code}")
+                    return []
+
+            except requests.RequestException as e:
+                print(f"Error fetching user dashboards: {e}")
+                return []
+
+        # 빈 옵션 리스트 반환
+        return []
+
+    @app.callback(
+        Output('device-add-person-dropdown', 'options'),
+        [Input('url', 'pathname'),
+         Input('device-add-person-dropdown', 'search_value')]
+    )
+    def render_dropdown_add_detail(pathname, search_value):
+        if pathname == '/admin/device/add':
+            user_email = session.get('user_email')
+            api_url = f"http://192.9.200.141:8000/user_dashboard/user_dashboards/{user_email}"
+
+            try:
+                response = requests.get(api_url)
+
+                if response.status_code == 200:
+                    user_dashboards = response.json().get('dashboards', [])
+                    dropdown_options = []
+
+                    for dashboard in user_dashboards:
+                        person_id = dashboard[1]
+                        dashboard_api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+
+                        try:
+                            dashboard_response = requests.get(dashboard_api_url)
+                            if dashboard_response.status_code == 200:
+                                dashboard_data = dashboard_response.json().get('dashboard', {})
+                                user_name = dashboard_data.get('name', 'Unknown Person')
+                                dropdown_options.append({'label': user_name, 'value': person_id})
+
+                        except requests.RequestException as e:
+                            print(f"Error fetching dashboard data: {e}")
+
+                    return dropdown_options
+
+                else:
+                    print(f"Failed to fetch user dashboards: {response.status_code}")
+                    return []
+
+            except requests.RequestException as e:
+                print(f"Error fetching user dashboards: {e}")
+                return []
+
+        # 빈 옵션 리스트 반환
+        return []
+
+    @app.callback(
         Output('device-detail-row', 'children'),
         [Input('url', 'pathname')]
     )
@@ -135,11 +226,40 @@ def device_controller(app):
                     detail_row.append(
                         create_detail_row("활성화 상태", convert_bool_to_on_off(device_data.get('on_off', "off")))),
                     detail_row.append(create_detail_row("기타사항", device_data.get('note', ""))),
+
+                    device_id = device_data.get('deviceId', 0)
+                    if device_id != 0:
+                        user_email = session.get('user_email')
+                        find_person_url = f"http://192.9.200.141:8000/user_dashboard_device/user_dashboard_devices/{user_email}/{device_id}"
+                        try:
+                            response = requests.get(find_person_url)
+                            if response.status_code == 200:
+                                person_data = response.json().get('user_dashboard_device', {})
+                                person_id = person_data[2]
+                                find_person_name_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+                                try:
+                                    response = requests.get(find_person_name_url)
+                                    if response.status_code == 200:
+                                        person_name = response.json().get('dashboard', {}).get('name', 'Unknown Person')
+                                        detail_row.append(create_detail_row("사용자", person_name))
+                                    else:
+                                        detail_row.append(create_detail_row("사용자", ""))
+                                except requests.exceptions.RequestException as e:
+                                    detail_row.append(create_detail_row("사용자", ""))
+                            else:
+                                detail_row.append(create_detail_row("사용자", ""))
+                        except requests.exceptions.RequestException as e:
+                            detail_row.append(create_detail_row("사용자", ""))
+                    else:
+                        detail_row.append(create_detail_row("사용자", ""))
+
                     return detail_row
                 else:
-                    return detail_row.append(create_detail_row("No device found", "Unknown Device"))
+                    # return detail_row.append(create_detail_row("No device found", "Unknown Device"))
+                    return detail_row.append([])
             except requests.exceptions.RequestException as e:
-                return detail_row.append(create_detail_row("No device found", "Unknown Device"))
+                # return detail_row.append(create_detail_row("No device found", "Unknown Device"))
+                return detail_row.append([])
         else:
             # update 하지 않기
             raise PreventUpdate
@@ -195,9 +315,11 @@ def device_controller(app):
                     edit_row.append(create_detail_edit_row("기타사항", device_data.get('note', ""))),
                     return edit_row
                 else:
-                    return edit_row.append(create_detail_edit_row("No device found", "Unknown Device"))
+                    # return edit_row.append(create_detail_edit_row("No device found", "Unknown Device"))
+                    return edit_row.append([])
             except requests.exceptions.RequestException as e:
-                return edit_row.append(create_detail_edit_row("No device found", "Unknown Device"))
+                # return edit_row.append(create_detail_edit_row("No device found", "Unknown Device"))
+                return edit_row.append([])
 
         else:
             # update 하지 않기
@@ -216,18 +338,20 @@ def device_controller(app):
             State('on-button', 'style'),
             State('off-button', 'style'),
             State('device-edit-기타사항', 'value'),
+            State('device-edit-person-dropdown', 'value')
         ],
         prevent_initial_call=True
     )
     def save_device_edit(n_clicks, device_type, mac_address, install_location, room, check_date, on_style, off_style,
-                         note):
+                         note, person_id):
         if n_clicks is None or n_clicks == 0:
             return PreventUpdate
         # else:
         #     print("Button clicked")
 
         # Validate State values
-        if not all([device_type, mac_address, install_location, room, check_date, on_style, off_style]):
+        if not all(
+                [device_type, mac_address, install_location, room, check_date, on_style, off_style, note, person_id]):
             # print("Missing state values. Preventing update.")
             raise PreventUpdate
 
@@ -257,15 +381,6 @@ def device_controller(app):
         except ValueError:
             raise PreventUpdate
 
-        # print(device_type, mac_address, install_location, room, check_date_str, device_status, note)
-        # print(type(device_type))
-        # print(type(mac_address))
-        # print(type(install_location))
-        # print(type(room))
-        # print(type(check_date_str))
-        # print(type(device_status))
-        # print(type(note))
-
         api_url = f"http://192.9.200.141:8000/device/update/{mac_address}"
         data = {
             "macAddress": mac_address,
@@ -280,12 +395,33 @@ def device_controller(app):
         try:
             response = requests.put(api_url, json=data)
             if response.status_code == 200:
-                return html.Div("저장 성공")
+                find_device_url = f"http://192.9.200.141:8000/device/{mac_address}"
+                find_device_response = requests.get(find_device_url)
+                if find_device_response.status_code == 200:
+                    device_data = find_device_response.json().get('device', {})
+                    device_id = device_data.get('deviceId', 0)
+                    if device_id != 0:
+                        user_email = session.get('user_email')
+                        user_device_api_url = f"http://192.9.200.141:8000/user_dashboard_device/update/{user_email}/{device_id}"
+                        user_device_data = {
+                            "userEmail": user_email,
+                            "deviceId": device_id,
+                            "personId": person_id
+                        }
+                        user_device_response = requests.put(user_device_api_url, json=user_device_data)
+                        if user_device_response.status_code == 200:
+                            return html.Div("저장 성공")
+                    else:
+                        return html.Div("해당 디바이스를 찾을 수 없습니다.")
+                else:
+                    return html.Div("해당 디바이스를 찾을 수 없습니다.")
             elif response.status_code == 404:
                 return html.Div("해당 디바이스를 찾을 수 없습니다.")
             else:
                 return html.Div("서버 연결 실패")
         except requests.exceptions.RequestException as e:
+            return html.Div(f"An error occurred: {str(e)}")
+        except Exception as e:
             return html.Div(f"An error occurred: {str(e)}")
 
     @app.callback(
@@ -301,18 +437,21 @@ def device_controller(app):
             State('on-button', 'style'),
             State('off-button', 'style'),
             State('device-add-기타사항', 'value'),
+            State('device-add-person-dropdown', 'value')
+
         ],
         prevent_initial_call=True
     )
     def save_device_add(n_clicks, device_type, mac_address, install_location, room, check_date, on_style, off_style,
-                         note):
+                        note, person_id):
         if n_clicks is None or n_clicks == 0:
             return PreventUpdate
         # else:
         #     print("Button clicked")
 
         # Validate State values
-        if not all([device_type, mac_address, install_location, room, check_date, on_style, off_style]):
+        if not all(
+                [device_type, mac_address, install_location, room, check_date, on_style, off_style, note, person_id]):
             # print("Missing state values. Preventing update.")
             raise PreventUpdate
 
@@ -376,7 +515,28 @@ def device_controller(app):
                 }
                 user_device_response = requests.post(user_device_api_url, json=user_device_data)
                 if user_device_response.status_code == 200:
-                    return html.Div("저장 성공")
+                    # deviceId 가져오기
+                    find_device_url = f"http://192.9.200.141:8000/device/{mac_address}"
+                    find_device_response = requests.get(find_device_url)
+                    if find_device_response.status_code == 200:
+                        device_data = find_device_response.json().get('device', {})
+                        device_id = device_data.get('deviceId', 0)
+                        if device_id != 0:
+                            user_device_api_url = f"http://192.9.200.141:8000/user_dashboard_device/register"
+                            user_device_data = {
+                                "userEmail": user_email,
+                                "deviceId": device_id,
+                                "personId": person_id
+                            }
+                            user_device_response = requests.post(user_device_api_url, json=user_device_data)
+                            if user_device_response.status_code == 200:
+                                return html.Div("저장 성공")
+                        else:
+                            return html.Div("해당 디바이스를 찾을 수 없습니다.")
+                    else:
+                        return html.Div("해당 디바이스를 찾을 수 없습니다.")
+                else:
+                    return html.Div("서버 연결 실패")
             elif response.status_code == 404:
                 return html.Div("해당 디바이스를 찾을 수 없습니다.")
             else:
@@ -386,7 +546,7 @@ def device_controller(app):
 
     @app.callback(
         Output('hidden-div-device-delete', 'children'),  # Using a dummy output
-        Input ('device-edit-delete-button', 'n_clicks'),
+        Input('device-edit-delete-button', 'n_clicks'),
         prevent_initial_call=True
     )
     def delete_device(n_clicks):
