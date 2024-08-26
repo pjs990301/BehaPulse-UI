@@ -1,6 +1,6 @@
 from flask_restx import fields
 
-user_device_model = {
+user_dashboard_model = {
     'userEmail': fields.String(required=True, description='User Email'),
-    'macAddress': fields.String(required=True, description='Mac Address'),
+    'personId': fields.Integer(required=True, description='Person Name'),
 }

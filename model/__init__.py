@@ -1,6 +1,5 @@
-from .room import room_model
-from .user import user_model
-from .user_room import user_room_model
+from .user import user_model, login_model, security_question_model
 from .device import device_model
 from .user_device import user_device_model
-from .administrator import *
+from .dashboard import dashboard_model
+from .user_dashboard_model import user_dashboard_model

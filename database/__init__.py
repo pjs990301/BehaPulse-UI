@@ -1,1 +1,1 @@
-from .db_connector import db, cursor
+from .db_connector import db
