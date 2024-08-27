@@ -72,6 +72,7 @@ class RegisterResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -100,6 +101,7 @@ class GetDashboardsResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -130,4 +132,5 @@ class DeleteResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()

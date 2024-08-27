@@ -21,6 +21,7 @@ fig.update_layout(
 
 
 def dashboard_detail_layout():
+    from flask import session
     return html.Div(
         dbc.Container([
             dbc.Row([
@@ -47,10 +48,10 @@ def dashboard_detail_layout():
             ], className="justify-content-end mx-1"),
 
             dbc.Row([
-                html.H1("홍길동",
+                html.H1("",
                         id='dashboard-detail-name',
                         style={'font-size': '2rem', 'color': 'black', 'margin-top': '20px', 'text-align': 'center'}),
-                html.H2("0000년 00월 00일 16:45:52",
+                html.H2("0000년 00월 00일 00:00:00",
                         id='dashboard-detail-date',
                         style={'font-size': '1.5rem', 'color': 'black', 'text-align': 'center'}),
                 # dbc.Row([
@@ -58,13 +59,13 @@ def dashboard_detail_layout():
                 #               className='p-0')
                 # ],
                 dbc.Row([
-                    dcc.Graph(id='live-graph', animate=True,
+                    dcc.Graph(id='live-graph',
                               config={'displayModeBar': False},
                               style={'height': '100%', 'width': '100%'},
                               className='p-0'),
                     dcc.Interval(
                         id='graph-update',
-                        interval=200,  # Update graph every 200 milliseconds
+                        interval=1000,  # Update graph every second
                         n_intervals=0
                     ),
                 ],
@@ -73,8 +74,8 @@ def dashboard_detail_layout():
                 ),
 
                 dbc.Row([
-                    html.H4("현재 행동 상태 : 앉아 있음",
-                            id = 'dashboard-detail-status',
+                    html.H4("현재 행동 상태 : ",
+                            id='dashboard-detail-status',
                             style={'font-size': '1.5rem', 'color': 'black', 'text-align': 'center',
                                    'margin-top': '10px'}),
                     # html.H4("금일 낙상 횟수 : 25500000",
@@ -85,7 +86,7 @@ def dashboard_detail_layout():
                     #                'margin-top': '10px'}),
                 ], className="justify-content-center align-items-center mt-4 p-1"),
 
-                html.Div(style={'flex-grow': '1'}),
+                dbc.Row(style={'flex-grow': '1'}),
 
             ], className="mt-3 mx-1 p-2 justify-content-between",
                 style={'background-color': 'rgba(143, 168, 250, 0.59)', 'height': '70vh', 'border-radius': '10px',

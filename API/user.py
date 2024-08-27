@@ -66,6 +66,7 @@ class RegisterResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -111,6 +112,7 @@ class LoginResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -142,6 +144,7 @@ class FindPasswordResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
     @user_ns.expect(security_question_field, validate=True)
@@ -183,6 +186,7 @@ class FindPasswordResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -220,6 +224,7 @@ class DeleteUserResource(Resource):
             db.rollback()
             return {'message': str(e)}, 500
         finally:
+            db.close()
             cursor.close()
 
 
@@ -261,4 +266,5 @@ class GetUserResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()

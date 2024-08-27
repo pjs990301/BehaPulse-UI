@@ -70,6 +70,7 @@ class RegisterResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -99,6 +100,7 @@ class DeleteDeviceResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -141,6 +143,7 @@ class GetDeviceResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -182,6 +185,7 @@ class GetDeviceResource(Resource):
             db.rollback()
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -230,11 +234,11 @@ class UpdateDeviceResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
 csi_data_dict = collections.defaultdict(lambda: {'amp': collections.deque(maxlen=100)})
-
 
 def process_csi_data(line):
     global csi_data_dict
@@ -242,9 +246,19 @@ def process_csi_data(line):
         # Split the string to extract relevant parts
         all_data = line.split(',')
         mac_address = all_data[2]  # Extract the MAC address
+        # print(mac_address)
         csi_data_str = all_data[-1].strip()[1:-1]  # Extract CSI data part and remove brackets
-        csi_data = list(map(int, csi_data_str.split()))
-        print(csi_data)
+        csi_data = []
+        # print(csi_data_str)
+        # csi_data = list(map(int, csi_data_str.split()))
+        for item in csi_data_str.split():
+            try:
+                csi_data.append(int(item))
+            except ValueError:
+                # print(f"Skipping invalid data: {item}")
+                continue
+
+        # print(csi_data)
 
         imaginary = csi_data[1::2]  # Extract imaginary parts (odd indices)
         real = csi_data[::2]  # Extract real parts (even indices)
@@ -281,6 +295,7 @@ class CSI(Resource):
 
 @device_ns.route('/CSI/<string:mac_address>')
 class LatestCSIData(Resource):
+    global csi_data_dict
     def get(self, mac_address):
         if mac_address in csi_data_dict:
             return jsonify(list(csi_data_dict[mac_address]['amp']))
@@ -288,7 +303,9 @@ class LatestCSIData(Resource):
             return jsonify([])
 
 
-@device_ns.route('/get_mac_addresses')
+@device_ns.route('/CSI/get_mac_addresses')
 class MacAddresses(Resource):
+    global csi_data_dict
+
     def get(self):
         return jsonify(list(csi_data_dict.keys()))

@@ -11,16 +11,16 @@ def create_dashboard_card(person_id, name, gender, birth, status):
     return dbc.Card(
         dbc.CardBody([
             dbc.Row([
-                dbc.Col(name, width=2, style={'font-size': '1rem', 'color': 'white'}, className='text-center p-0'),
-                dbc.Col(gender, width=2, style={'font-size': '1rem', 'color': 'white'}, className='text-center p-0'),
-                dbc.Col(birth, width=4, style={'font-size': '1rem', 'color': 'white'}, className='text-center p-0'),
+                dbc.Col(name, width=2, style={'font-size': '0.8rem', 'color': 'white'}, className='text-center p-0'),
+                dbc.Col(gender, width=2, style={'font-size': '0.8rem', 'color': 'white'}, className='text-center p-0'),
+                dbc.Col(birth, width=4, style={'font-size': '0.8rem', 'color': 'white'}, className='text-center p-0'),
                 dbc.Col(
                     [status,
                      html.Img(src="assets/img/detail_device.svg", style={'margin-left': '20px', 'cursor': 'pointer'},
                               id={'type': 'dashboard-dots-icon', 'index': person_id}
                               )
 
-                     ], width=4, style={'font-size': '1rem', 'color': 'white'}, className='text-center p-0')
+                     ], width=4, style={'font-size': '0.8rem', 'color': 'white'}, className='text-center p-0')
             ]),
         ], style={'flex': '0 0', 'padding': '0.5rem'}),
         style={'background-color': '#8FA8FA', 'border-radius': '20px', 'margin-bottom': '10px', 'height': '5vh',

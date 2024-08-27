@@ -61,6 +61,7 @@ class RegisterResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -92,6 +93,7 @@ class DeleteResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -122,13 +124,15 @@ class GetDashboradResource(Resource):
                 'name': dashboard[1],
                 'gender': dashboard[2],
                 'birth': dashboard[3].strftime('%Y-%m-%d'),
-                'location': dashboard[4]
+                'location': dashboard[4],
+                'status': dashboard[5]
             }
             return {'dashboard': dashboard_data}, 200
         except Exception as e:
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -175,4 +179,47 @@ class UpdateResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
+            cursor.close()
+
+@dashboard_ns.route('/update/state/<int:person_id>')
+class UpdateState(Resource) :
+    def put(self, person_id):
+        """
+        Person 상태 수정
+        """
+        if not request.is_json:
+            return {'message': 'Missing JSON in request'}, 400
+
+        data = request.json
+
+        required_keys = ['status']
+
+        if not all(key in data for key in required_keys):
+            return {"message": "Missing required fields."}, 400
+
+        state = data['status']
+
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+        try:
+            # 대시보드 상태 수정
+            query = "UPDATE dashboard SET status = %s WHERE personId = %s"
+            cursor.execute(query, (state, person_id))
+            db.commit()
+
+            return {'message': 'Dashboard state updated successfully'}, 200
+
+        except Exception as e:
+            db.rollback()
+            return {'message': str(e)}, 500
+
+        finally:
+            db.close()
             cursor.close()

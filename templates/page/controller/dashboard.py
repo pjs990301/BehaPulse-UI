@@ -7,7 +7,7 @@ from dash import Dash, dcc, html, callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State, ALL
 import requests
-import requests
+import plotly.graph_objs as go
 
 from ..layout.content.dashboard import create_dashboard_card
 from ..layout.content.dashboard_person_info import create_person_detail_row
@@ -19,7 +19,7 @@ def dashboard_controller(app):
         Output('dashboard-cards-row', 'children'),
         [Input('url', 'pathname')]
     )
-    def render_device_card(pathname):
+    def render_dashboard_card(pathname):
         if pathname == '/admin/dashboard':
             user_email = session.get('user_email')
 
@@ -95,7 +95,7 @@ def dashboard_controller(app):
         Output('person-detail-row', 'children'),
         [Input('url', 'pathname')]
     )
-    def render_device_detail(pathname):
+    def render_dashboard_detail(pathname):
         if pathname == '/admin/dashboard/detail/info':
             person_id = session.get('selected_dashboard_id')
             api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
@@ -167,7 +167,7 @@ def dashboard_controller(app):
         ],
         prevent_initial_call=True
     )
-    def save_device_edit(n_clicks, name, gender, birth, location):
+    def save_dashboard_edit(n_clicks, name, gender, birth, location):
         if n_clicks is None or n_clicks == 0:
             return PreventUpdate
         # else:
@@ -213,7 +213,7 @@ def dashboard_controller(app):
         Input('dashboard-edit-delete-button', 'n_clicks'),
         prevent_initial_call=True
     )
-    def delete_device(n_clicks):
+    def delete_dashboard(n_clicks):
         if n_clicks is None or n_clicks == 0:
             return PreventUpdate
 
@@ -308,8 +308,7 @@ def dashboard_controller(app):
         return html.Div("저장 성공")
 
     @app.callback(
-        [Output('dashboard-detail-name', 'children'),
-         Output('dashboard-detail-date', 'children')],
+        Output('dashboard-detail-name', 'children'),
         [Input('url', 'pathname')]
     )
     def render_dashboard_detail_name(pathname):
@@ -322,39 +321,151 @@ def dashboard_controller(app):
                 if response.status_code == 200:
                     person_data = response.json().get('dashboard', {})
                     person_name = person_data.get('name', 'Unknown Person')
-                    current_time = datetime.now().strftime("%Y년 %m월 %d일 %H:%M:%S")
-                    return person_name, current_time
+                    # current_time = datetime.now().strftime("%Y년 %m월 %d일 %H:%M:%S")
+
+                    user_email = session.get('user_email')
+                    get_device_api_url = f"http://192.9.200.141:8000/user_dashboard_device/user_dashboard_devices/device/{user_email}/{person_id}"
+                    try:
+                        device_response = requests.get(get_device_api_url)
+                        if device_response.status_code == 200:
+                            user_dashbaord_device = device_response.json().get('user_dashboard_device', [])
+
+                            # 3번째 인덱스 (device_data_id)만 추출
+                            device_data_ids = [item[3] for item in user_dashbaord_device]
+
+                            if device_data_ids:
+                                # 세션에서 mac_address_to_visualize 리스트를 가져오거나, 없으면 빈 리스트를 생성
+                                mac_addresses_to_visualize = []
+
+                                for device_data_id in device_data_ids:
+                                    device_api_url = f"http://192.9.200.141:8000/device/{device_data_id}"
+                                    device_response = requests.get(device_api_url)
+
+                                    if device_response.status_code == 200:
+                                        device_data_list = device_response.json().get('device', {})
+                                        mac_address = device_data_list.get('macAddress')
+                                        on_off = device_data_list.get('on_off')
+
+                                        if mac_address and on_off == 1:
+                                            if mac_address not in mac_addresses_to_visualize:
+                                                mac_addresses_to_visualize.append(mac_address)
+
+                                # 세션에 변경된 리스트 저장
+                                session['mac_address_to_visualize'] = mac_addresses_to_visualize
+                                # print(session['mac_address_to_visualize'])
+                                return person_name
+
+                            else:
+                                return person_name
+
+                        else:
+                            return person_name
+
+                    except requests.exceptions.RequestException as e:
+                        return "Unknown Person"
+
                 else:
-                    return "Unknown Person", "0000년 00월 00일 00:00:00"
+                    return "Unknown Person"
+
             except requests.exceptions.RequestException as e:
-                return "Unknown Person", "0000년 00월 00일 00:00:00"
+                return "Unknown Person"
         else:
             raise PreventUpdate
 
-    # @app.callback(
-    #     [Output('live-graph', 'figure'),
-    #      Output('live-stats', 'children')],
-    #     [Input('graph-update', 'n_intervals')]
-    # )
-    # def update_graph(n_intervals):
-    #     if mac_address_to_visualize in csi_data_dict:
-    #         amp_data = np.array(csi_data_dict[mac_address_to_visualize]['amp'])
-    #         if amp_data.size > 0:
-    #             x_data = list(range(100 - len(amp_data), 100))
-    #             y_data = amp_data[:, 44]  # Example: plotting subcarrier 44
-    #
-    #             figure = {
-    #                 'data': [{'x': x_data, 'y': y_data, 'type': 'line', 'line': {'color': 'red'}}],
-    #                 'layout': {
-    #                     'title': f'Amplitude of Subcarrier 44 for MAC {mac_address_to_visualize}',
-    #                     'xaxis': {'title': 'Time'},
-    #                     'yaxis': {'title': 'Amplitude'},
-    #                     'xaxis': {'range': [0, 100]},
-    #                 }
-    #             }
-    #
-    #             stats_text = f"Total packets processed for {mac_address_to_visualize}: {len(amp_data)}"
-    #
-    #             return figure, stats_text
-    #
-    #     return {}, "No data available"
+    @app.callback(
+        Output('live-graph', 'figure'),
+        [Input('graph-update', 'n_intervals'),
+         Input('url', 'pathname')],
+        prevent_initial_call=True
+    )
+    def update_graph(n_intervals, pathname):
+        if n_intervals is None or n_intervals == 0:
+            raise PreventUpdate
+
+        if pathname == '/admin/dashboard/detail':
+            # 세션에서 시각화할 MAC 주소 목록을 가져옴
+            mac_address_list = session.get('mac_address_to_visualize', None)
+            # print(mac_address_list)
+            if mac_address_list:
+                traces = []
+
+                for mac_address in mac_address_list:
+                    # Flask API를 호출하여 특정 MAC 주소의 최신 CSI 데이터를 가져옴
+                    response = requests.get(f'http://192.9.200.141:8000/device/CSI/{mac_address}')
+
+                    if response.status_code == 200:
+                        amp_data = response.json()
+                        # amp_data = amp_data[0:100]  # 최근 100개의 데이터 포인트만 사용
+                        if amp_data:
+                            # X축 데이터 생성 (가장 최근 100개의 데이터 포인트)
+                            x_data = list(range(len(amp_data)))
+
+                            # Y축 데이터는 44번째 서브캐리어의 암시적 진폭 (예시)
+                            y_data = [amplitude[44] for amplitude in amp_data if len(amplitude) > 44]
+
+                            trace = go.Scatter(
+                                x=x_data,
+                                y=y_data,
+                                mode='lines',
+                                name=f'MAC {mac_address}',  # MAC 주소별로 이름을 부여
+                                line={'width': 2}
+                            )
+                            traces.append(trace)
+
+                figure = {
+                    'data': traces,
+                    'layout': go.Layout(
+                        # title='Amplitude of Subcarrier 44 for Multiple MAC Addresses',
+                        xaxis={'title': 'Time', 'range': [0, 100]},
+                        yaxis={'title': 'Amplitude', 'range': [0, 40]},
+                        showlegend=False
+                    )
+                }
+
+                return figure
+
+            return {}
+        else:
+            raise PreventUpdate
+
+    @app.callback(
+        Output('dashboard-detail-status', 'children'),
+        [Input('graph-update', 'n_intervals'),
+         Input('url', 'pathname')],
+        prevent_initial_call=True
+    )
+    def update_status(n_intervals, pathname):
+        if n_intervals is None or n_intervals == 0:
+            raise PreventUpdate
+
+        if pathname == '/admin/dashboard/detail':
+            person_id = session.get('selected_dashboard_id')
+            api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+            try:
+                response = requests.get(api_url)
+
+                if response.status_code == 200:
+                    person_data = response.json().get('dashboard', {})
+                    person_status = person_data.get('status', 'Unknown Person')
+
+                    return f"현재 행동상태 : {person_status}"
+                else:
+                    return " "
+            except requests.exceptions.RequestException as e:
+                return " "
+        else:
+            raise PreventUpdate
+
+    @app.callback(
+        Output('dashboard-detail-date', 'children'),
+        [Input('graph-update', 'n_intervals'),
+         Input('url', 'pathname')],
+        prevent_initial_call=True
+    )
+    def update_status(n_intervals, pathname):
+        if n_intervals is None or n_intervals == 0:
+            raise PreventUpdate
+
+        if pathname == '/admin/dashboard/detail':
+            current_time = datetime.now().strftime("%Y년 %m월 %d일 %H:%M:%S")
+            return current_time

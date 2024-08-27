@@ -79,6 +79,7 @@ class RegisterResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -112,6 +113,7 @@ class UserDeviceResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -143,6 +145,7 @@ class GetUserDeviceResource(Resource):
             db.rollback()
             return {'message': str(e)}, 500
         finally:
+            db.close()
             cursor.close()
 
 
@@ -192,4 +195,37 @@ class DeleteUserDeviceResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
+            cursor.close()
+
+
+@user_device_ns.route('/<int:deviceId>')
+class getEmail(Resource):
+    def get(self, deviceId):
+        """
+        특정 디바이스의 이메일 조회
+        """
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+        try:
+            query = "SELECT * FROM user_device WHERE deviceId = %s"
+            cursor.execute(query, (deviceId,))
+            user_device = cursor.fetchone()
+
+            if not user_device:
+                return {'message': 'User device not found'}, 404
+
+            return {'user_device': user_device}, 200
+
+        except Exception as e:
+            db.rollback()
+            return {'message': str(e)}, 500
+        finally:
+            db.close()
             cursor.close()

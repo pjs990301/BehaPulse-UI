@@ -90,6 +90,7 @@ class RegisterResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
 
@@ -121,13 +122,15 @@ class GetUserDashboardDevice(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
 
-@user_dashboard_device_ns.route('/user_dashboard_devices/<string:userEmail>/<int:deviceId>')
-class GetUserId(Resource) :
-    def get(self, userEmail, deviceId) :
+
+@user_dashboard_device_ns.route('/user_dashboard_devices/person/<string:userEmail>/<int:deviceId>')
+class GetUserId(Resource):
+    def get(self, userEmail, deviceId):
         """
-        유저 대시보드 디바이스 조회
+        유저 대시보드 PersonId 조회
         """
         db = mysql.connector.connect(
             host=db_config['Database']['host'],
@@ -151,6 +154,39 @@ class GetUserId(Resource) :
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
+            cursor.close()
+
+
+@user_dashboard_device_ns.route('/user_dashboard_devices/device/<string:userEmail>/<int:personId>')
+class GetDeviceId(Resource):
+    def get(self, userEmail, personId):
+        """
+        유저 대시보드 디바이스Id 조회
+        """
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+        try:
+            query = "SELECT * FROM user_dashboard_device WHERE userEmail = %s AND personId = %s"
+            cursor.execute(query, (userEmail, personId))
+            user_dashboard_device = cursor.fetchall()
+
+            if not user_dashboard_device:
+                return {'message': 'User dashboard device not found'}, 404
+
+            return {'user_dashboard_device': user_dashboard_device}, 200
+
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+        finally:
+            db.close()
             cursor.close()
 
 
@@ -197,5 +233,5 @@ class UpdateResource(Resource):
             return {'message': str(e)}, 500
 
         finally:
+            db.close()
             cursor.close()
-

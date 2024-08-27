@@ -230,7 +230,7 @@ def device_controller(app):
                     device_id = device_data.get('deviceId', 0)
                     if device_id != 0:
                         user_email = session.get('user_email')
-                        find_person_url = f"http://192.9.200.141:8000/user_dashboard_device/user_dashboard_devices/{user_email}/{device_id}"
+                        find_person_url = f"http://192.9.200.141:8000/user_dashboard_device/user_dashboard_devices/person/{user_email}/{device_id}"
                         try:
                             response = requests.get(find_person_url)
                             if response.status_code == 200:
