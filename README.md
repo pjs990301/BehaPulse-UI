@@ -15,6 +15,7 @@
     - [Flask 부분](#flask-부분-1)
     - [Dash 부분](#dash-부분-1)
 - [API 문서](#api-문서)
+- [데이터베이스 SQL](#데이터베이스-sql)
 - [라이선스](#라이선스)
 
 ## 기능
@@ -30,6 +31,8 @@
 - `README.md`: 프로젝트 문서
 - `templates/`: Dash 템플릿 파일 포함
 - `app.py`: Flask 애플리케이션 실행 파일
+- `img/`: UI 및 API 관련 파일 포함
+
 
 ## 디렉토리 구조
 <details>
@@ -144,7 +147,18 @@ BehaPulse-UI/
 ## 사용법
 
 ### Flask 부분
-1. `config/db_config.json`에서 데이터베이스 구성이 올바르게 설정되었는지 확인합니다.
+1. `config/db_config.json`에서 데이터베이스 구성이 올바르게 설정되었는지 확인합니다. 다음의 구조에 맞춰서 작성해야 합니다:
+    ```json
+    {
+      "Database" : {
+        "host": "",
+        "user": "",
+        "password": "",
+        "database": "",
+        "auth_plugin" : ""
+      }
+    }
+    ```
 2. 애플리케이션을 실행합니다:
     ```sh
     python app.py
@@ -163,6 +177,104 @@ API 문서는 `swagger.json` 파일에 있습니다. 다음 모델에 대한 정
 - `DashboardModel`
 - `UserDashboardModel`
 - `UserDashboardDeviceModel`
+
+## 데이터베이스 SQL
+<details>
+<summary>접기/펼치기</summary>
+
+```sql
+create table dashboard
+(
+    personId int auto_increment
+        primary key,
+    name     varchar(255) not null,
+    gender   varchar(255) not null,
+    birth    date         not null,
+    location varchar(255) null,
+    status   varchar(255) null
+)
+    charset = utf8mb3;
+
+create table device
+(
+    deviceId         int auto_increment
+        primary key,
+    macAddress       varchar(255) not null,
+    type             varchar(255) not null,
+    install_location varchar(255) null,
+    room             varchar(255) null,
+    check_date       date         null,
+    on_off           tinyint(1)   not null,
+    note             varchar(255) null
+)
+    charset = utf8mb3;
+
+create table user
+(
+    userEmail        varchar(255)                        not null
+        primary key,
+    userPassword     varchar(255)                        not null,
+    userName         varchar(255)                        not null,
+    createdAt        timestamp default CURRENT_TIMESTAMP null,
+    securityQuestion varchar(255)                        not null,
+    securityAnswer   varchar(255)                        not null
+)
+    charset = utf8mb3;
+
+create table user_dashboard
+(
+    userDashboardId int auto_increment
+        primary key,
+    personId        int          not null,
+    userEmail       varchar(255) not null,
+    constraint user_dashboard_dashboard_personId_fk
+        foreign key (personId) references dashboard (personId)
+            on update cascade on delete cascade,
+    constraint user_dashboard_user_userEmail_fk
+        foreign key (userEmail) references user (userEmail)
+            on update cascade on delete cascade
+)
+    charset = utf8mb3;
+
+create index idx_user_dashboard_userEmail_personId
+    on user_dashboard (userEmail, personId);
+
+create table user_device
+(
+    userDeviceId int auto_increment
+        primary key,
+    userEmail    varchar(255) not null,
+    deviceId     int          not null,
+    constraint user_device_ibfk_1
+        foreign key (userEmail) references user (userEmail)
+            on update cascade on delete cascade,
+    constraint user_device_ibfk_2
+        foreign key (deviceId) references device (deviceId)
+            on update cascade on delete cascade
+)
+    charset = utf8mb3;
+
+create table user_dashboard_device
+(
+    userDashboardDeviceId int auto_increment
+        primary key,
+    userEmail             varchar(255) null,
+    personId              int          null,
+    deviceId              int          null,
+    constraint user_dashboard_device_user_dashboard_fk
+        foreign key (userEmail, personId) references user_dashboard (userEmail, personId)
+            on update cascade on delete cascade,
+    constraint user_dashboard_device_user_device_fk
+        foreign key (userEmail, deviceId) references user_device (userEmail, deviceId)
+            on update cascade on delete cascade
+)
+    charset = utf8mb3;
+
+create index idx_user_device_userEmail_deviceId
+    on user_device (userEmail, deviceId);
+```
+
+</details>
 
 ## 라이선스
 이 프로젝트는 MIT 라이선스에 따라 라이선스가 부여됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하십시오.
