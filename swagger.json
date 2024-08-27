@@ -2,6 +2,181 @@
   "swagger": "2.0",
   "basePath": "/",
   "paths": {
+    "/dashboard/delete/{person_id}/{name}": {
+      "parameters": [
+        {
+          "name": "person_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "대시보드 삭제",
+        "operationId": "delete_delete_resource",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/dashboard/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "대시보드 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DashboardModel"
+            }
+          }
+        ],
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/dashboard/update/state/{person_id}": {
+      "parameters": [
+        {
+          "name": "person_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Person 상태 수정",
+        "operationId": "put_update_state",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/dashboard/update/{person_id}": {
+      "parameters": [
+        {
+          "name": "person_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "대시보드 수정",
+        "operationId": "put_update_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DashboardModel"
+            }
+          }
+        ],
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/dashboard/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "대시보드 조회",
+        "operationId": "get_get_dashborad_resource",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/device/CSI": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "operationId": "post_csi",
+        "tags": [
+          "device"
+        ]
+      }
+    },
+    "/device/CSI/get_mac_addresses": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "operationId": "get_mac_addresses",
+        "tags": [
+          "device"
+        ]
+      }
+    },
+    "/device/CSI/{mac_address}": {
+      "parameters": [
+        {
+          "name": "mac_address",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "operationId": "get_latest_csi_data",
+        "tags": [
+          "device"
+        ]
+      }
+    },
     "/device/delete/{macAddress}": {
       "parameters": [
         {
@@ -19,20 +194,6 @@
         },
         "summary": "디바이스 삭제",
         "operationId": "delete_delete_device_resource",
-        "tags": [
-          "device"
-        ]
-      }
-    },
-    "/device/devices": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "모든 디바이스 조회",
-        "operationId": "get_device_resource",
         "tags": [
           "device"
         ]
@@ -62,70 +223,86 @@
         ]
       }
     },
-    "/room/delete/{roomId}": {
+    "/device/update/{macAddress}": {
       "parameters": [
         {
-          "name": "roomId",
+          "name": "macAddress",
           "in": "path",
           "required": true,
-          "type": "integer"
+          "type": "string"
         }
       ],
-      "delete": {
+      "put": {
         "responses": {
           "200": {
             "description": "Success"
           }
         },
-        "summary": "호실 삭제",
-        "operationId": "delete_delete_room_resource",
-        "tags": [
-          "room"
-        ]
-      }
-    },
-    "/room/register": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "호실 등록",
-        "operationId": "post_register_resource",
+        "summary": "특정 디바이스 정보 수정",
+        "operationId": "put_update_device_resource",
         "parameters": [
           {
             "name": "payload",
             "required": true,
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/RoomModel"
+              "$ref": "#/definitions/DeviceModel"
             }
           }
         ],
         "tags": [
-          "room"
+          "device"
         ]
       }
     },
-    "/room/rooms": {
+    "/device/{deviceId}": {
+      "parameters": [
+        {
+          "name": "deviceId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
       "get": {
         "responses": {
           "200": {
             "description": "Success"
           }
         },
-        "summary": "모든 호실 조회",
-        "operationId": "get_room_resource",
+        "summary": "특정 디바이스 조회",
+        "operationId": "get_get_device_resource",
         "tags": [
-          "room"
+          "device"
         ]
       }
     },
-    "/user/delete/{userId}": {
+    "/device/{macAddress}": {
       "parameters": [
         {
-          "name": "userId",
+          "name": "macAddress",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "특정 디바이스 조회",
+        "operationId": "get_get_device_resource",
+        "tags": [
+          "device"
+        ]
+      }
+    },
+    "/user/delete/{userEmail}": {
+      "parameters": [
+        {
+          "name": "userEmail",
           "in": "path",
           "required": true,
           "type": "string"
@@ -139,6 +316,74 @@
         },
         "summary": "특정 유저 삭제",
         "operationId": "delete_delete_user_resource",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/find_password/{userEmail}": {
+      "parameters": [
+        {
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "비밀번호 찾기",
+        "operationId": "post_find_password_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SecurityQuestionModel"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "비밀번호 찾기",
+        "operationId": "get_find_password_resource",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/login": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 로그인",
+        "operationId": "post_login_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/LoginModel"
+            }
+          }
+        ],
         "tags": [
           "user"
         ]
@@ -168,56 +413,10 @@
         ]
       }
     },
-    "/user/update/{userId}": {
+    "/user/{userEmail}": {
       "parameters": [
         {
-          "name": "userId",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "put": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "특정 유저 정보 수정",
-        "operationId": "put_update_user_resource",
-        "parameters": [
-          {
-            "name": "payload",
-            "required": true,
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/UserModel"
-            }
-          }
-        ],
-        "tags": [
-          "user"
-        ]
-      }
-    },
-    "/user/users": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "모든 유저 조회",
-        "operationId": "get_user_resource",
-        "tags": [
-          "user"
-        ]
-      }
-    },
-    "/user/{userId}": {
-      "parameters": [
-        {
-          "name": "userId",
+          "name": "userEmail",
           "in": "path",
           "required": true,
           "type": "string"
@@ -236,10 +435,214 @@
         ]
       }
     },
-    "/user_device/delete/{userId}/{macAddress}": {
+    "/user_dashboard/delete/{userEmail}/{personId}": {
       "parameters": [
         {
-          "name": "userId",
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "personId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 삭제",
+        "operationId": "delete_delete_resource",
+        "tags": [
+          "user_dashboard"
+        ]
+      }
+    },
+    "/user_dashboard/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserDashboardModel"
+            }
+          }
+        ],
+        "tags": [
+          "user_dashboard"
+        ]
+      }
+    },
+    "/user_dashboard/user_dashboards/{userEmail}": {
+      "parameters": [
+        {
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 리스트 가져오기",
+        "operationId": "get_get_dashboards_resource",
+        "tags": [
+          "user_dashboard"
+        ]
+      }
+    },
+    "/user_dashboard_device/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 디바이스 등록",
+        "operationId": "post_register_resource",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserDashboardDeviceModel"
+            }
+          }
+        ],
+        "tags": [
+          "user_dashboard_device"
+        ]
+      }
+    },
+    "/user_dashboard_device/update/{userEmail}/{deviceId}": {
+      "parameters": [
+        {
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "deviceId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 디바이스 수정",
+        "operationId": "put_update_resource",
+        "tags": [
+          "user_dashboard_device"
+        ]
+      }
+    },
+    "/user_dashboard_device/user_dashboard_devices/device/{userEmail}/{personId}": {
+      "parameters": [
+        {
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "personId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 디바이스Id 조회",
+        "operationId": "get_get_device_id",
+        "tags": [
+          "user_dashboard_device"
+        ]
+      }
+    },
+    "/user_dashboard_device/user_dashboard_devices/person/{userEmail}/{deviceId}": {
+      "parameters": [
+        {
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "deviceId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 PersonId 조회",
+        "operationId": "get_get_user_id",
+        "tags": [
+          "user_dashboard_device"
+        ]
+      }
+    },
+    "/user_dashboard_device/user_dashboard_devices/{userEmail}": {
+      "parameters": [
+        {
+          "name": "userEmail",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "유저 대시보드 디바이스 리스트 가져오기",
+        "operationId": "get_get_user_dashboard_device",
+        "tags": [
+          "user_dashboard_device"
+        ]
+      }
+    },
+    "/user_device/delete/{userEmail}/{macAddress}": {
+      "parameters": [
+        {
+          "name": "userEmail",
           "in": "path",
           "required": true,
           "type": "string"
@@ -302,10 +705,10 @@
         ]
       }
     },
-    "/user_device/user_devices/{userId}": {
+    "/user_device/user_devices/{userEmail}": {
       "parameters": [
         {
-          "name": "userId",
+          "name": "userEmail",
           "in": "path",
           "required": true,
           "type": "string"
@@ -324,156 +727,10 @@
         ]
       }
     },
-    "/user_room/delete/{roomId}": {
+    "/user_device/{deviceId}": {
       "parameters": [
         {
-          "name": "roomId",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "특정 호실의 유저 삭제",
-        "operationId": "delete_delete_room_resource",
-        "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/delete/{userId}": {
-      "parameters": [
-        {
-          "name": "userId",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "특정 유저의 호실 삭제",
-        "operationId": "delete_delete_user_resource",
-        "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/register": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "유저의 호실 등록",
-        "operationId": "post_register_resource",
-        "parameters": [
-          {
-            "name": "payload",
-            "required": true,
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/UserRoomModel"
-            }
-          }
-        ],
-        "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/update/{roomId}": {
-      "parameters": [
-        {
-          "name": "roomId",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "put": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "특정 호실의 유저 수정",
-        "operationId": "put_update_room_resource",
-        "parameters": [
-          {
-            "name": "payload",
-            "required": true,
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/UserRoomModel"
-            }
-          }
-        ],
-        "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/update/{userId}": {
-      "parameters": [
-        {
-          "name": "userId",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "put": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "특정 유저의 호실 수정",
-        "operationId": "put_update_user_resource",
-        "parameters": [
-          {
-            "name": "payload",
-            "required": true,
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/UserRoomModel"
-            }
-          }
-        ],
-        "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/user_rooms": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "모든 유저의 호실 조회",
-        "operationId": "get_user_room_resource",
-        "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/user_rooms/{roomId}": {
-      "parameters": [
-        {
-          "name": "roomId",
+          "name": "deviceId",
           "in": "path",
           "required": true,
           "type": "integer"
@@ -485,32 +742,10 @@
             "description": "Success"
           }
         },
-        "summary": "특정 호실의 유저 조회",
-        "operationId": "get_get_room_resource",
+        "summary": "특정 디바이스의 이메일 조회",
+        "operationId": "get_get_email",
         "tags": [
-          "user_room"
-        ]
-      }
-    },
-    "/user_room/user_rooms/{userId}": {
-      "parameters": [
-        {
-          "name": "userId",
-          "in": "path",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "특정 유저의 호실 조회",
-        "operationId": "get_get_user_resource",
-        "tags": [
-          "user_room"
+          "user_device"
         ]
       }
     }
@@ -532,83 +767,132 @@
       "description": "User API"
     },
     {
-      "name": "room",
-      "description": "Room API"
-    },
-    {
-      "name": "user_room",
-      "description": "User Room API"
-    },
-    {
       "name": "device",
       "description": "Device API"
     },
     {
       "name": "user_device",
       "description": "User Device API"
+    },
+    {
+      "name": "dashboard",
+      "description": "Dashboard API"
+    },
+    {
+      "name": "user_dashboard",
+      "description": "User Dashboard API"
+    },
+    {
+      "name": "user_dashboard_device",
+      "description": "User Dashboard Device API"
     }
   ],
   "definitions": {
     "UserModel": {
       "required": [
-        "Birth",
-        "userId",
-        "userName"
+        "securityAnswer",
+        "securityQuestion",
+        "userEmail",
+        "userName",
+        "userPassword"
       ],
       "properties": {
-        "userId": {
+        "userEmail": {
           "type": "string",
-          "description": "User ID"
+          "description": "Email"
+        },
+        "userPassword": {
+          "type": "string",
+          "description": "Password"
         },
         "userName": {
           "type": "string",
-          "description": "User Name"
+          "description": "Name"
         },
-        "Birth": {
+        "createdAt": {
           "type": "string",
-          "format": "date",
-          "description": "Birth"
+          "format": "date-time",
+          "description": "Created At"
+        },
+        "securityQuestion": {
+          "type": "string",
+          "description": "Security Question"
+        },
+        "securityAnswer": {
+          "type": "string",
+          "description": "Security Answer"
         }
       },
       "type": "object"
     },
-    "RoomModel": {
+    "LoginModel": {
       "required": [
-        "roomId"
+        "userEmail",
+        "userPassword"
       ],
       "properties": {
-        "roomId": {
-          "type": "integer",
-          "description": "Room ID"
+        "userEmail": {
+          "type": "string",
+          "description": "Email"
+        },
+        "userPassword": {
+          "type": "string",
+          "description": "Password"
         }
       },
       "type": "object"
     },
-    "UserRoomModel": {
+    "SecurityQuestionModel": {
       "required": [
-        "roomId",
-        "userId"
+        "securityAnswer",
+        "securityQuestion"
       ],
       "properties": {
-        "userId": {
+        "securityQuestion": {
           "type": "string",
-          "description": "User ID"
+          "description": "Security Question"
         },
-        "roomId": {
-          "type": "integer",
-          "description": "Room ID"
+        "securityAnswer": {
+          "type": "string",
+          "description": "Security Answer"
         }
       },
       "type": "object"
     },
     "DeviceModel": {
       "required": [
-        "macAddress"
+        "macAddress",
+        "type"
       ],
       "properties": {
         "macAddress": {
           "type": "string",
           "description": "Mac Address"
+        },
+        "type": {
+          "type": "string",
+          "description": "Device Type"
+        },
+        "install_location": {
+          "type": "string",
+          "description": "Install Location"
+        },
+        "room": {
+          "type": "string",
+          "description": "Room"
+        },
+        "check_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Check Date"
+        },
+        "note": {
+          "type": "string",
+          "description": "Note"
+        },
+        "on_off": {
+          "type": "string",
+          "description": "On/Off"
         }
       },
       "type": "object"
@@ -616,16 +900,81 @@
     "UserDeviceModel": {
       "required": [
         "macAddress",
-        "userId"
+        "userEmail"
       ],
       "properties": {
-        "userId": {
+        "userEmail": {
           "type": "string",
-          "description": "User ID"
+          "description": "User Email"
         },
         "macAddress": {
           "type": "string",
           "description": "Mac Address"
+        }
+      },
+      "type": "object"
+    },
+    "DashboardModel": {
+      "required": [
+        "gender",
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name"
+        },
+        "gender": {
+          "type": "string",
+          "description": "Gender"
+        },
+        "birth": {
+          "type": "string",
+          "format": "date",
+          "description": "Birth"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location"
+        }
+      },
+      "type": "object"
+    },
+    "UserDashboardModel": {
+      "required": [
+        "personId",
+        "userEmail"
+      ],
+      "properties": {
+        "userEmail": {
+          "type": "string",
+          "description": "User Email"
+        },
+        "personId": {
+          "type": "integer",
+          "description": "Person Name"
+        }
+      },
+      "type": "object"
+    },
+    "UserDashboardDeviceModel": {
+      "required": [
+        "deviceId",
+        "personId",
+        "userEmail"
+      ],
+      "properties": {
+        "userEmail": {
+          "type": "string",
+          "description": "User Email"
+        },
+        "deviceId": {
+          "type": "integer",
+          "description": "Device ID"
+        },
+        "personId": {
+          "type": "integer",
+          "description": "Person ID"
         }
       },
       "type": "object"
