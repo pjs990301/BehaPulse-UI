@@ -165,7 +165,7 @@ BehaPulse-UI/
     ```
 
 ### Dash 부분
-1. Flask 애플리케이션이 실행되면 Dash 애플리케이션이 자동으로 실행됩니다.
+1. Flask 애플리케이션이 실행되면 Dash 애플리케이션이 자동으로 실행됩니다. 접속 시 `host:port/admin/`으로 접속해야 합니다.
 
 ## API 문서
 API 문서는 `swagger.json` 파일에 있습니다. 다음 모델에 대한 정의를 포함합니다:
