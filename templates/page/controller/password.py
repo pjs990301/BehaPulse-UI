@@ -4,6 +4,7 @@ from dash import Dash, dcc, html, callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import requests
+import os
 
 
 def password_controller(app):
@@ -20,7 +21,7 @@ def password_controller(app):
                 return "", dbc.Alert("올바른 이메일 형식이 아닙니다.", color='danger')
 
             if (n_blur > 0) and email:
-                api_url = f"http://192.9.200.141:8000/user/find_password/{email}"
+                api_url = f"{os.getenv('SERVER_IP')}/user/find_password/{email}"
 
                 try:
                     response = requests.get(api_url)
@@ -50,7 +51,7 @@ def password_controller(app):
         if not email or not question or not answer:
             return dbc.Alert("모든 내용을 작성해주시기 바랍니다.", color="danger")
 
-        api_url = f"http://192.9.200.141:8000/user/find_password/{email}"
+        api_url = f"{os.getenv('SERVER_IP')}/user/find_password/{email}"
         data = {
             "securityQuestion": question,
             "securityAnswer": answer

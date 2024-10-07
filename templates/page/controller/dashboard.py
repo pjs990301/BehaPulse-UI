@@ -1,7 +1,7 @@
 from dash.exceptions import PreventUpdate
 from datetime import datetime
 
-from app import admin_app
+from app import admin_app, app
 from flask import Flask, session
 from dash import Dash, dcc, html, callback_context
 import dash_bootstrap_components as dbc
@@ -12,6 +12,7 @@ import plotly.graph_objs as go
 from ..layout.content.dashboard import create_dashboard_card
 from ..layout.content.dashboard_person_info import create_person_detail_row
 from ..layout.content.dashboard_person_edit import create_person_edit_row
+import os
 
 
 def dashboard_controller(app):
@@ -23,7 +24,7 @@ def dashboard_controller(app):
         if pathname == '/admin/dashboard':
             user_email = session.get('user_email')
 
-            api_url = f"http://192.9.200.141:8000/user_dashboard/user_dashboards/{user_email}"
+            api_url = f"{os.getenv('SERVER_IP')}/user_dashboard/user_dashboards/{user_email}"
 
             try:
                 response = requests.get(api_url)
@@ -34,7 +35,7 @@ def dashboard_controller(app):
 
                     for dashboard in user_dashboards:
                         person_id = dashboard[1]
-                        dashboard_api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+                        dashboard_api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
                         try:
                             dashboard_response = requests.get(dashboard_api_url)
                             if dashboard_response.status_code == 200:
@@ -98,7 +99,7 @@ def dashboard_controller(app):
     def render_dashboard_detail(pathname):
         if pathname == '/admin/dashboard/detail/info':
             person_id = session.get('selected_dashboard_id')
-            api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+            api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
             detail_row = []
             try:
                 response = requests.get(api_url)
@@ -130,7 +131,7 @@ def dashboard_controller(app):
     def render_dashboard_edit(pathname):
         if pathname == '/admin/dashboard/detail/edit':
             person_id = session.get('selected_dashboard_id')
-            api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+            api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
             edit_row = []
             try:
                 response = requests.get(api_url)
@@ -189,7 +190,7 @@ def dashboard_controller(app):
         except ValueError:
             raise PreventUpdate
 
-        api_url = f"http://192.9.200.141:8000/dashboard/update/{session.get('selected_dashboard_id')}"
+        api_url = f"{os.getenv('SERVER_IP')}/dashboard/update/{session.get('selected_dashboard_id')}"
         data = {
             "name": name,
             "gender": gender,
@@ -218,7 +219,7 @@ def dashboard_controller(app):
             return PreventUpdate
 
         person_id = session.get('selected_dashboard_id')
-        api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+        api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
         try:
             response = requests.get(api_url)
 
@@ -226,7 +227,7 @@ def dashboard_controller(app):
                 person_data = response.json().get('dashboard', {})
                 person_name = person_data.get('name', 'Unknown Person')
 
-                api_url = f"http://192.9.200.141:8000/dashboard/delete/{person_id}/{person_name}"
+                api_url = f"{os.getenv('SERVER_IP')}/dashboard/delete/{person_id}/{person_name}"
 
                 try:
                     response = requests.delete(api_url)
@@ -276,7 +277,7 @@ def dashboard_controller(app):
         except ValueError:
             raise PreventUpdate
 
-        api_url = f"http://192.9.200.141:8000/dashboard/register"
+        api_url = f"{os.getenv('SERVER_IP')}/dashboard/register"
         data = {
             "name": name,
             "gender": gender,
@@ -291,7 +292,7 @@ def dashboard_controller(app):
                 user_email = session.get('user_email')
                 person_id = response.json()['personId']
 
-                user_dashboard_api_url = f"http://192.9.200.141:8000/user_dashboard/register"
+                user_dashboard_api_url = f"{os.getenv('SERVER_IP')}/user_dashboard/register"
                 user_dashboard_data = {
                     "userEmail": user_email,
                     "personId": person_id
@@ -314,7 +315,7 @@ def dashboard_controller(app):
     def render_dashboard_detail_name(pathname):
         if pathname == '/admin/dashboard/detail':
             person_id = session.get('selected_dashboard_id')
-            api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+            api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
             try:
                 response = requests.get(api_url)
 
@@ -324,7 +325,7 @@ def dashboard_controller(app):
                     # current_time = datetime.now().strftime("%Y년 %m월 %d일 %H:%M:%S")
 
                     user_email = session.get('user_email')
-                    get_device_api_url = f"http://192.9.200.141:8000/user_dashboard_device/user_dashboard_devices/device/{user_email}/{person_id}"
+                    get_device_api_url = f"{os.getenv('SERVER_IP')}/user_dashboard_device/user_dashboard_devices/device/{user_email}/{person_id}"
                     try:
                         device_response = requests.get(get_device_api_url)
                         if device_response.status_code == 200:
@@ -338,7 +339,7 @@ def dashboard_controller(app):
                                 mac_addresses_to_visualize = []
 
                                 for device_data_id in device_data_ids:
-                                    device_api_url = f"http://192.9.200.141:8000/device/{device_data_id}"
+                                    device_api_url = f"{os.getenv('SERVER_IP')}/device/{device_data_id}"
                                     device_response = requests.get(device_api_url)
 
                                     if device_response.status_code == 200:
@@ -391,7 +392,7 @@ def dashboard_controller(app):
 
                 for mac_address in mac_address_list:
                     # Flask API를 호출하여 특정 MAC 주소의 최신 CSI 데이터를 가져옴
-                    response = requests.get(f'http://192.9.200.141:8000/device/CSI/{mac_address}')
+                    response = requests.get(f"{os.getenv('SERVER_IP')}/device/CSI/{mac_address}")
 
                     if response.status_code == 200:
                         amp_data = response.json()
@@ -440,7 +441,7 @@ def dashboard_controller(app):
 
         if pathname == '/admin/dashboard/detail':
             person_id = session.get('selected_dashboard_id')
-            api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+            api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
             try:
                 response = requests.get(api_url)
 
