@@ -24,11 +24,11 @@ def create_smartthings_device_card(device_name, mac_address, status):
                     #                  id={'type': 'device-dots-icon', 'index': mac_address}),
                     html.Img(src="assets/img/detail_device.svg", style={'margin-left': '20px', 'cursor': 'pointer'},
                              # href="/admin/device/detail",
-                             id={'type': 'smartthings-device-dots-icon', 'index': mac_address, 'brightness': 100}
+                             id={'type': 'smartthings-device-dots-icon', 'index': mac_address, 'brightness': '100'}
                              ),
                     html.Img(src="assets/img/detail_device.svg", style={'margin-left': '20px', 'cursor': 'pointer'},
                              # href="/admin/device/detail",
-                             id={'type': 'smartthings-device-dots-icon', 'index': mac_address, 'brightness': 0}
+                             id={'type': 'smartthings-device-dots-icon', 'index': mac_address, 'brightness': '0'}
                              ),
                 ], width=3, style={'font-size': '1rem', 'color': status_color}, className='text-center p-0')
             ]),

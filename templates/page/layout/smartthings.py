@@ -33,7 +33,6 @@ def smartthings_layout():
     return html.Div([
         # dcc.Location(id='url', refresh=False),  # URL tracking component
         html.H2("SmartThings 연동 센터", className="text-center my-4", style={'color': '#4C76FF'}),
-        html.Button(' ', id='login-button', n_clicks=0),
         html.A(id='token-output', children=' '),  # Component to display the token
         html.Div(id='cards-output', children=' '),  # Component to display the token
         html.Div(id='access-token-output', children='Access Token Output Here:'),

@@ -32,65 +32,58 @@ def smartthings_device_controller(app):
 
     @app.callback(
         Output('cards-output', 'children'),
-        [Input('login-button', 'n_clicks'), Input('url', 'pathname')]
+        Input('url', 'pathname')
     )
     # '''
-    def update_token_output(n_clicks, pathname):
-        # SmartThings API 토큰
-
-        # API URL
-
-        # 요청 헤더 설정
-
-        # output = ''
-        # access_token = request.cookies.get('access_token')
-        # refresh_token = request.cookies.get('refresh_token')
-
-        # session['mac_address_to_visualize'] = mac_addresses_to_visualize
-        # session['mac_address_to_visualize'] = mac_addresses_to_visualize
-
-
+    def update_token_output(pathname):
         cards = []  # 여기에 생성된 카드들을 담을 리스트를 생성합니다.
-        if 'access_token' in session and 'refresh_token' in session:
-            # Get Access Token and Refresh Token From session
-            access_token = session['access_token']
-            refresh_token = session['refresh_token']
-            url = 'https://api.smartthings.com/v1/devices'
-            headers = {
-                'Authorization': f'Bearer {access_token}',
-                'Content-Type': 'application/json'
-            }
-            try:
-                response = requests.get(url, headers=headers)
+        api_url = f"{os.getenv('SERVER_IP')}/user/st_token/{session['user_email']}"
+        try:
+            response = requests.get(api_url)
+            print(response.json())
 
-                if response.status_code == 200:
-                    devices = response.json()
-                    for device in devices['items']:
-                        cards.append(create_smartthings_device_card(
-                            device['name'],
-                            device['deviceId'],
-                            device['name']))
-                else:
-                        # cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
+            if response.status_code == 200:
+                res = response.json()['user']
+                access_token = res['stAccessToken']
+                refresh_token = res['stRefreshToken']
+                # if 'access_token' in session and 'refresh_token' in session:
+                #     # Get Access Token and Refresh Token From session
+                #     access_token = session['access_token']
+                #     refresh_token = session['refresh_token']
+                url = 'https://api.smartthings.com/v1/devices'
+                headers = {
+                    'Authorization': f'Bearer {access_token}',
+                    'Content-Type': 'application/json'
+                }
+                try:
+                    response = requests.get(url, headers=headers)
+
+                    if response.status_code == 200:
+                        devices = response.json()
+                        for device in devices['items']:
+                            cards.append(create_smartthings_device_card(
+                                device['name'],
+                                device['deviceId'],
+                                device['name']))
+                    else:
+                            # cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
+                        cards.append([])
+                except requests.exceptions.RequestException as e:
+                    print(str(e))
+                    # cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
                     cards.append([])
-            except requests.exceptions.RequestException as e:
-                print(str(e))
-                # cards.append(create_device_card("No devices found", "Unknown MAC", "off"))
-                cards.append([])
+        except:
+            cards.append([])
         return cards  # 리스트로 반환
+
 
         
     @app.callback(
-        Output('result', 'children'),
-        Input({'type': 'smartthings-device-dots-icon', 'index': ALL, 'brightness': ALL}, 'n_clicks'),  # Input comes after Outputs,
-        prevent_initial_call=True
+        Output('access-token-output', 'children', allow_duplicate=True),
+        Input({'type': 'smartthings-device-dots-icon', 'index': ALL, 'brightness': ALL}, 'n_clicks'),
+        prevent_initial_call='initial_duplicate'
     )
     def store_clicked_smartthings_deviceId(n_clicks):
-
-        # Get Access Token and Refresh Token From session
-        if 'access_token' in session and 'refresh_token' in session:
-            access_token = session['access_token']
-            refresh_token = session['refresh_token']
 
         print("clicked", callback_context)
         ctx = callback_context
@@ -112,34 +105,43 @@ def smartthings_device_controller(app):
 
         if clicked_id and clicked_brightness_value:
             # if access_token and refresh_token:
-            if 'access_token' in session and 'refresh_token' in session:
-                access_token = session['access_token']
-                refresh_token = session['refresh_token']
+            api_url = f"{os.getenv('SERVER_IP')}/user/st_token/{session['user_email']}"
+            try:
+                token_response = requests.get(api_url)
+                print(token_response.json())
 
-                url = f'https://api.smartthings.com/v1/devices/{clicked_id}/commands'
-                headers = {
-                    'Authorization': f'Bearer {access_token}',
-                    'Content-Type': 'application/json'
-                }
-                brightness = int(clicked_brightness_value)
-                payload = {
-                    "commands": [
-                        {
-                            "component": "main", 
-                            "capability": "switchLevel",
-                            "command": "setLevel",
-                            "arguments": [brightness]  # Brightness Value (0-100)
-                        }
-                    ]
-                }
-                print("Trying to call API", url, payload, headers)
-                response = requests.post(url, headers=headers, json=payload)
-                print("Response:", response.status_code, response.text)
-                if response.status_code == 200:
-                    return f"전구의 밝기를 {brightness}%로 설정했습니다."
+                if token_response.status_code == 200:
+                    res = token_response.json()['user']
+                    access_token = res['stAccessToken']
+                    refresh_token = res['stRefreshToken']
+
+                    url = f'https://api.smartthings.com/v1/devices/{clicked_id}/commands'
+                    headers = {
+                        'Authorization': f'Bearer {access_token}',
+                        'Content-Type': 'application/json'
+                    }
+                    brightness = int(clicked_brightness_value)
+                    payload = {
+                        "commands": [
+                            {
+                                "component": "main", 
+                                "capability": "switchLevel",
+                                "command": "setLevel",
+                                "arguments": [brightness]  # Brightness Value (0-100)
+                            }
+                        ]
+                    }
+                    print("Trying to call API", url, payload, headers)
+                    response = requests.post(url, headers=headers, json=payload)
+                    print("Response:", response.status_code, response.text)
+                    if response.status_code == 200:
+                        return f"전구의 밝기를 {brightness}%로 설정했습니다."
+                    else:
+                        return f"오류 발생: {response.status_code}, {response.text}"
                 else:
-                    return f"오류 발생: {response.status_code}, {response.text}"
-            else:
-                return 'No Access token'
+                    return f"오류 발생: {token_response.status_code}, {token_response.text}"
+            except Exception as e:
+                return f"Err: {str(e)}"
+
         else:
             raise PreventUpdate
