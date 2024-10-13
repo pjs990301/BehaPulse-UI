@@ -1,12 +1,9 @@
-from .home import *
+from .main import main_content
 
-from .device import *
-from .device_detail import *
-from .device_edit import *
-from .device_add import *
+from .device.device import device_content
+from .device.device_add import device_add_layout
+from .device.device_edit import device_edit_layout
+from .device.device_detail import device_detail_layout
 
-from .dashboard import *
-from .dashboard_add import *
-from .dashboard_detail import *
-from .dashboard_person_info import *
-from .dashboard_person_edit import *
+from .dashboard.dashboard import dashboard_content
+from .user.user import user_content
