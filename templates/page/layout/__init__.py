@@ -5,6 +5,9 @@ from .main_page import *
 
 from .content import *
 
+from .smartthings import smartthings_layout
+from .smartthings_device import smartthings_device_layout
+
 from dash import no_update, callback_context, State
 
 url_to_layout = {
@@ -12,8 +15,11 @@ url_to_layout = {
     '/admin/': login_layout,
     '/admin/signup': signup_layout,
     '/admin/password': find_password_layout,
-    '/admin/main': main_layout
+    '/admin/main': main_layout,
+    '/admin/smartthings': smartthings_layout,
+    '/admin/smartthings_device': smartthings_device_layout,
 }
+
 url_to_content = {
     '/admin/home': home_layout,
     '/admin/dashboard': dashbord_layout,
@@ -25,6 +31,9 @@ url_to_content = {
     '/admin/dashboard/detail': dashboard_detail_layout,
     '/admin/dashboard/detail/info': dashboard_person_info_layout,
     '/admin/dashboard/detail/edit': dashboard_person_edit_layout,
+    # '/admin/smartthings': smartthings_layout,
+    '/admin/smartthings': smartthings_layout,
+    '/admin/smartthings_device': smartthings_device_layout,
 }
 
 

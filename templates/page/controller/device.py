@@ -11,6 +11,7 @@ from ..layout.content.device import create_device_card
 from ..layout.content.device_detail import create_detail_row
 from ..layout.content.device_edit import create_detail_edit_row, create_detail_on_off
 from ..layout.content.device_add import create_detail_row_add, create_detail_on_off
+import os
 
 
 def convert_bool_to_on_off(value):
@@ -51,7 +52,7 @@ def device_controller(app):
         if pathname == '/admin/device':
             user_email = session.get('user_email')
 
-            api_url = f"http://192.9.200.141:8000/user_device/user_devices/{user_email}"
+            api_url = f"{os.getenv('SERVER_IP')}/user_device/user_devices/{user_email}"
 
             try:
                 response = requests.get(api_url)
@@ -61,7 +62,7 @@ def device_controller(app):
                     cards = []  # 여기에 생성된 카드들을 담을 리스트를 생성합니다.
                     for device in user_devices:
                         user_device_id = device[2]
-                        device_api_url = f"http://192.9.200.141:8000/device/{user_device_id}"
+                        device_api_url = f"{os.getenv('SERVER_IP')}/device/{user_device_id}"
                         try:
                             device_response = requests.get(device_api_url)
 
@@ -123,7 +124,7 @@ def device_controller(app):
     def render_dropdown_detail(pathname, search_value):
         if pathname == '/admin/device/edit':
             user_email = session.get('user_email')
-            api_url = f"http://192.9.200.141:8000/user_dashboard/user_dashboards/{user_email}"
+            api_url = f"{os.getenv('SERVER_IP')}/user_dashboard/user_dashboards/{user_email}"
 
             try:
                 response = requests.get(api_url)
@@ -134,7 +135,7 @@ def device_controller(app):
 
                     for dashboard in user_dashboards:
                         person_id = dashboard[1]
-                        dashboard_api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+                        dashboard_api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
 
                         try:
                             dashboard_response = requests.get(dashboard_api_url)
@@ -167,7 +168,7 @@ def device_controller(app):
     def render_dropdown_add_detail(pathname, search_value):
         if pathname == '/admin/device/add':
             user_email = session.get('user_email')
-            api_url = f"http://192.9.200.141:8000/user_dashboard/user_dashboards/{user_email}"
+            api_url = f"{os.getenv('SERVER_IP')}/user_dashboard/user_dashboards/{user_email}"
 
             try:
                 response = requests.get(api_url)
@@ -178,7 +179,7 @@ def device_controller(app):
 
                     for dashboard in user_dashboards:
                         person_id = dashboard[1]
-                        dashboard_api_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+                        dashboard_api_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
 
                         try:
                             dashboard_response = requests.get(dashboard_api_url)
@@ -210,7 +211,7 @@ def device_controller(app):
     def render_device_detail(pathname):
         if pathname == '/admin/device/detail':
             mac_address = session.get('selected_device_mac_address')
-            api_url = f"http://192.9.200.141:8000/device/{mac_address}"
+            api_url = f"{os.getenv('SERVER_IP')}/device/{mac_address}"
             detail_row = []
             try:
                 response = requests.get(api_url)
@@ -230,13 +231,13 @@ def device_controller(app):
                     device_id = device_data.get('deviceId', 0)
                     if device_id != 0:
                         user_email = session.get('user_email')
-                        find_person_url = f"http://192.9.200.141:8000/user_dashboard_device/user_dashboard_devices/person/{user_email}/{device_id}"
+                        find_person_url = f"{os.getenv('SERVER_IP')}/user_dashboard_device/user_dashboard_devices/person/{user_email}/{device_id}"
                         try:
                             response = requests.get(find_person_url)
                             if response.status_code == 200:
                                 person_data = response.json().get('user_dashboard_device', {})
                                 person_id = person_data[2]
-                                find_person_name_url = f"http://192.9.200.141:8000/dashboard/{person_id}"
+                                find_person_name_url = f"{os.getenv('SERVER_IP')}/dashboard/{person_id}"
                                 try:
                                     response = requests.get(find_person_name_url)
                                     if response.status_code == 200:
@@ -272,7 +273,7 @@ def device_controller(app):
     def render_device_edit(pathname):
         if pathname == '/admin/device/edit':
             mac_address = session.get('selected_device_mac_address')
-            api_url = f"http://192.9.200.141:8000/device/{mac_address}"
+            api_url = f"{os.getenv('SERVER_IP')}/device/{mac_address}"
             edit_row = []
             try:
                 response = requests.get(api_url)
@@ -381,7 +382,7 @@ def device_controller(app):
         except ValueError:
             raise PreventUpdate
 
-        api_url = f"http://192.9.200.141:8000/device/update/{mac_address}"
+        api_url = f"{os.getenv('SERVER_IP')}/device/update/{mac_address}"
         data = {
             "macAddress": mac_address,
             "type": device_type,
@@ -395,14 +396,14 @@ def device_controller(app):
         try:
             response = requests.put(api_url, json=data)
             if response.status_code == 200:
-                find_device_url = f"http://192.9.200.141:8000/device/{mac_address}"
+                find_device_url = f"{os.getenv('SERVER_IP')}/device/{mac_address}"
                 find_device_response = requests.get(find_device_url)
                 if find_device_response.status_code == 200:
                     device_data = find_device_response.json().get('device', {})
                     device_id = device_data.get('deviceId', 0)
                     if device_id != 0:
                         user_email = session.get('user_email')
-                        user_device_api_url = f"http://192.9.200.141:8000/user_dashboard_device/update/{user_email}/{device_id}"
+                        user_device_api_url = f"{os.getenv('SERVER_IP')}/user_dashboard_device/update/{user_email}/{device_id}"
                         user_device_data = {
                             "userEmail": user_email,
                             "deviceId": device_id,
@@ -490,7 +491,7 @@ def device_controller(app):
         # print(type(device_status))
         # print(type(note))
 
-        api_url = f"http://192.9.200.141:8000/device/register"
+        api_url = f"{os.getenv('SERVER_IP')}/device/register"
         data = {
             "macAddress": mac_address,
             "type": device_type,
@@ -508,7 +509,7 @@ def device_controller(app):
                 user_email = session.get('user_email')
                 # print(user_email)
                 # print(mac_address)
-                user_device_api_url = f"http://192.9.200.141:8000/user_device/register"
+                user_device_api_url = f"{os.getenv('SERVER_IP')}/user_device/register"
                 user_device_data = {
                     "userEmail": user_email,
                     "macAddress": mac_address
@@ -516,13 +517,13 @@ def device_controller(app):
                 user_device_response = requests.post(user_device_api_url, json=user_device_data)
                 if user_device_response.status_code == 200:
                     # deviceId 가져오기
-                    find_device_url = f"http://192.9.200.141:8000/device/{mac_address}"
+                    find_device_url = f"{os.getenv('SERVER_IP')}/device/{mac_address}"
                     find_device_response = requests.get(find_device_url)
                     if find_device_response.status_code == 200:
                         device_data = find_device_response.json().get('device', {})
                         device_id = device_data.get('deviceId', 0)
                         if device_id != 0:
-                            user_device_api_url = f"http://192.9.200.141:8000/user_dashboard_device/register"
+                            user_device_api_url = f"{os.getenv('SERVER_IP')}/user_dashboard_device/register"
                             user_device_data = {
                                 "userEmail": user_email,
                                 "deviceId": device_id,
@@ -554,7 +555,7 @@ def device_controller(app):
             return PreventUpdate
 
         mac_address = session.get('selected_device_mac_address')
-        api_url = f"http://192.9.200.141:8000/device/delete/{mac_address}"
+        api_url = f"{os.getenv('SERVER_IP')}/device/delete/{mac_address}"
         try:
             response = requests.delete(api_url)
             if response.status_code == 200:
