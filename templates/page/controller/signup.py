@@ -5,8 +5,11 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import requests
 from dash import Dash, dcc, html, callback_context, no_update
-
+import json
 from ..layout.signup import *
+
+with open('config/server.json', 'r') as f:
+    server = json.load(f)
 
 
 def signup_controller(app):
@@ -169,6 +172,7 @@ def signup_controller(app):
                     alert('보안 질문과 답변을 모두 입력해 주세요.');
                     return [signup_data, step];  // 값이 없으므로 현재 단계 유지
                 }
+                signup_data['FinalStep'] = true;
                 console.log("SecurityQuestion stored: " + signup_data['securityQuestion']);
                 console.log("SecurityAnswer stored: " + signup_data['securityAnswer']);
             }
@@ -288,9 +292,11 @@ def signup_controller(app):
                 signup_data['id_validated'] = False
                 return signup_data
 
+            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/check-email/{user_id}'
+
             # ID 중복 확인 API 호출
             try:
-                response = requests.get(f'http://192.9.200.141:8000/user/check-email/{user_id}')
+                response = requests.get(api_url)
                 if response.status_code == 200:
                     # ID가 이미 존재할 경우
                     signup_data['id_validated'] = False  # 중복됨
@@ -315,7 +321,7 @@ def signup_controller(app):
     )
     def signup(n_clicks, signup_data, step):
         # 단계 6에서 API 호출 실행
-        if step == 6 and n_clicks:
+        if step == 6 and n_clicks and signup_data['FinalStep']:
             # 모든 필드가 존재하는지 확인
             required_fields = ['id', 'password', 'name', 'gender', 'year', 'month', 'day', 'securityQuestion',
                                'securityAnswer']
@@ -335,10 +341,10 @@ def signup_controller(app):
                 "securityAnswer": signup_data['securityAnswer'],
                 "birthDate": birth_date
             }
-
+            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/register'
             # 회원가입 API 요청
             try:
-                response = requests.post('http://192.9.200.141:8000/user/register', json=payload)
+                response = requests.post(api_url, json=payload)
 
                 if response.status_code == 201:
                     # 회원가입 성공 시 step을 7로 설정

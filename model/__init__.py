@@ -4,3 +4,4 @@ from .user_device import user_device_model
 from .dashboard import dashboard_model
 from .user_dashboard import user_dashboard_model
 from .user_dashboard_device import user_dashboard_device_model
+from .color_brightness import color_brightness_model

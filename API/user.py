@@ -113,7 +113,7 @@ class LoginResource(Resource):
             if not user:
                 return {'message': 'user not found'}, 404
 
-            return {'message': 'user logged in successfully'}, 200
+            return {'userName': user[2]}, 200
 
         except Exception as e:
             return {'message': str(e)}, 500

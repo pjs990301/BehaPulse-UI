@@ -5,27 +5,14 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash.dependencies import Input, Output
 
-from flask import Flask, session
-from dash import Dash, dcc, html
 
-import dash_bootstrap_components as dbc
-import pandas as pd
-from dash.dependencies import Input, Output
-
-# 색상 정의
-status_colors = {
-    "active": "#00D84F",  # 녹색
-    "inactive": "#E10000"  # 빨간색
-}
-
-
-def device_layout():
+def more_layout():
     layout = html.Div([
 
-        dcc.Location(id='device', refresh=True),  # 페이지 이동을 위한 Location
+        dcc.Location(id='more', refresh=True),  # 페이지 이동을 위한 Location
 
         # 오버레이 배경
-        html.Div(id='overlay-background', style={
+        html.Div(id='more-overlay-background', style={
             'display': 'none',
             'position': 'fixed',
             'top': 0,
@@ -37,12 +24,25 @@ def device_layout():
         }),
 
         # 오버레이 팝업 창
-        html.Div(id='overlay-container', children=[
+        html.Div(id='more-overlay-container', children=[
             html.Div([
-                html.Div("길병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='gil-button'),
-                html.Div("아산병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='asan-button'),
-                html.Div("중앙병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'},
-                         id='jungang-button')
+                html.Div(["정말로 로그아웃", html.Br(), "하시겠습니까?"],
+                         style={'font-size': '20px', 'padding': '10px', 'cursor': 'pointer'}),
+                html.Div([
+                    html.Div([
+                        html.Div("확인", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer',
+                                              'background': '#003CFF', 'width': '40%', 'border-radius': '8px',
+                                              'color': '#fff'},
+                                 id='more-confirm-button'),
+                        html.Div("취소", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer',
+                                              'background': '#D5D5D5', 'width': '40%', 'border-radius': '8px',
+                                              'color': '#fff'},
+                                 id='more-cancel-button')
+                    ], style={'display': 'flex', 'width': '90%', 'justify-content': 'space-around'}),
+                ],
+                    style={'display': 'flex', 'width': '100%', 'justify-content': 'center', 'margin-top': '20px'},
+                    id='more-overlay-buttons'
+                )
             ], style={
                 'background': '#fff',
                 'border-radius': '30px',
@@ -52,7 +52,7 @@ def device_layout():
                 'padding': '20px',
                 'position': 'relative',
                 'textAlign': 'center'
-            })
+            }, id='more-overlay-content')
         ], style={
             'display': 'none',
             'position': 'fixed',
@@ -65,40 +65,38 @@ def device_layout():
             'zIndex': 2
         }),
 
-        # 상단 영역
         dbc.Container([
-            # 상단 영역
+            # 상단 영역: 뒤로가기 아이콘과 타이틀
             html.Div([
                 dbc.Row([
                     dbc.Col(
-                        html.Span("미사1동",
+                        html.Span("",
                                   style={'font-weight': 'bold', 'color': '#3F3F3F', 'font-size': '1.5rem',
                                          'justify-content': 'center', 'align-items': 'center',
-                                         'display': 'flex'}),
+                                         'display': 'flex'}, id='more-name'),
                         className="d-flex align-items-center justify-content-center",
-                        style={'padding-right': '0.25rem'},
-                        width="auto",
+                        width="auto"
                     ),
                     dbc.Col(
-                        html.I(className='ic-arrow-down', id='main-down-button',
+                        html.I(className='ic-arrow-forward',
                                style={'font-size': '1.2rem', 'width': '1.5rem', 'height': '1.5rem',
                                       'cursor': 'pointer'},
                                ),
                         className="d-flex align-items-center justify-content-center",
-                        style={'padding-left': '0.25rem'},
                         width="auto",
                     ),
 
-                ], className="align-items-center mt-5 mb-3 justify-content-center", )
+                ], className="align-items-center my-5 justify-content-center", )
 
             ],
+                id='more-header-content',
                 className="d-flex justify-content-start mx-3",
             ),
         ]),
 
         # 중앙 영역
         dbc.Container([
-            html.Div(children=device_content(), id='main-content', className='d-flex h-100 w-100'),
+            html.Div(children=more_content(), id='main-content', className='d-flex h-100 w-100'),
         ], className='flex-grow-1'),
 
         # 하단 영역
@@ -112,9 +110,9 @@ def device_layout():
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-home-button'),
                     html.Div([
-                        html.I(className='ic-desktop-selected', id='main-device-button-icon',
+                        html.I(className='ic-desktop', id='main-device-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("장치", className='text-bottom-selected'),
+                        html.Div("장치", className='text-bottom'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-device-button'),
                     html.Div([
@@ -130,9 +128,9 @@ def device_layout():
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-dashboard-button'),
                     html.Div([
-                        html.I(className='ic-more', id='main-more-button-icon',
+                        html.I(className='ic-more-selected', id='main-more-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("더보기", className='text-bottom'),
+                        html.Div("더보기", className='text-bottom-selected'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-more-button'),
                 ],
@@ -145,61 +143,50 @@ def device_layout():
 
     return layout
 
-# 재사용 가능한 장치 항목 컴포넌트 함수
-def device_item(name, mac_address, status):
-    """장치 항목 컴포넌트"""
-    return html.Div(
-        [
-            # 왼쪽 장치 정보
-            html.Div([
-                html.Div(name, style={'font-weight': 'bold', 'font-size': '20px'}),
-                html.Div(mac_address, style={'color': 'grey', 'font-size': '14px'}),
-            ], style={'display': 'inline-block'}),
 
-            # 오른쪽 상태 아이콘
-            html.Div([
-                html.Span(style={
-                    'backgroundColor': status_colors[status],
-                    'width': '2.5vh',
-                    'height': '2.5vh',
-                    'border-radius': '6px',
-                    'display': 'inline-block'
-                })
-            ], style={'display': 'inline-block'}),
-
-        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center',
-                  'padding': '10px 0px', 'border-bottom': '1px solid #F4F4F4',
-                  'width': '100%'},
-
-        # 행 전체가 클릭되도록 설정 (n_clicks 속성 추가)
-        id={'type': 'device-row', 'index': mac_address},  # 각 줄에 고유 id 부여
-        n_clicks=0,  # 클릭 수 초기화
-    )
-
-
-def device_content():
+def more_content():
     content = html.Div([
-        dcc.Store(id='device-data-store', data={}),  # 데이터를 저장할 숨겨진 Store
-        dbc.Row([
-            # 제목
-            html.Span("장치 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
 
-            dcc.Loading(
-                id="loading-spinner",
-                type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
-                children=html.Div(id='device-rows', className='w-100 mb-3',
-                                  style={'height': '65vh', 'overflow-y': 'auto'},),
-            ),
-
+        dbc.Row(
             html.Div([
-                dbc.Button([
-                    # 아이콘과 텍스트를 버튼 안에 배치
-                    html.I(className='ic-device-add me-1', style={'width': '2rem', 'height': '2rem'}),
-                    html.Span("장치 추가", style={'font-size': '1rem', 'font-weight': 'bold'})
-                ], color="primary", id='device-add-button', href='/beha-pulse/main/device/add/'),
-            ], className='d-flex justify-content-end w-100 p-0')
-        ], className='w-100'),
+                ""
+            ], style={'background': '#F4F4F4', 'border-radius': '7px', 'width': '100%', 'height': '10vh',
+                      'font-size': '2vh'}, id='more-id',
+                className="d-flex align-items-center p-3")
+            , className="w-100"),
+        html.Div([
+            more_item("ic-logout", "로그아웃"),
+            more_item("ic-privacy-tip", "개인정보 방침 조항"),
+            more_item("ic-description", "이용약관"),
+            more_item("ic-info", "앱 정보"),
+            more_item("ic-live-help", "도움말")
+        ], className='w-100 mt-4')
 
     ], className="d-flex align-items-center flex-column mx-3 h-100 w-100 justify-content-center")
 
     return content
+
+
+def more_item(icon_class, label):
+    return html.Div(
+        [
+            # 왼쪽 아이콘
+            html.Div([
+                html.I(className=icon_class, style={'height': '5vh', 'width': '5vh'}),
+            ], style={'display': 'flex',
+                      'justify-content': 'center', 'align-items': 'center',
+                      'border-radius': '10px', 'width': '7vh', 'height': '7vh',
+                      'margin-right': '20px',
+                      },
+            ),
+            # 중앙 라벨
+            html.Div([
+                html.Span(label, style={'font-size': '1.25rem'}),
+            ], style={'display': 'inline-block'}),
+
+        ], style={'display': 'flex', 'justify-content': 'start', 'align-items': 'center',
+                  'padding': '10px 0px', 'width': '95%', 'cursor': 'pointer','border-bottom': '1px solid #F4F4F4',},
+
+        id={'type': 'more-item', 'index': label},
+        n_clicks=0
+    )

@@ -1,33 +1,49 @@
 from .signup import *
 from .splash import *
 from .login import *
-from .main import *
+from templates.page.layout.content.main.main import *
 from .content import *
 from .find_id import *
 from .find_pw import *
 
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 
 url_to_layout = {
     '/beha-pulse/': splash_layout,
     '/beha-pulse/signup/': signup_layout,
     '/beha-pulse/login/': login_layout,
-    '/beha-pulse/main/': main_layout,
     '/beha-pulse/find-id/': find_id_layout,
     '/beha-pulse/find-password/': find_pw_layout,
 }
 
-main_to_device_layout = {
+device_layout_content = {
     '/beha-pulse/main/device/add/': device_add_layout,
     '/beha-pulse/main/device/edit/': device_edit_layout,
     '/beha-pulse/main/device/detail/': device_detail_layout,
 }
 
-main_to_sub = {
-    '/beha-pulse/main/': main_content,
-    '/beha-pulse/main/device/': device_content,
-    '/beha-pulse/main/dashboard/': dashboard_content,
-    '/beha-pulse/main/user/': user_content,
+control_layout_content = {
+    '/beha-pulse/main/control/color/': control_color_layout,
+}
+
+dashboard_layout_content = {
+    '/beha-pulse/main/dashboard/add/': dashboard_add_layout,
+    '/beha-pulse/main/dashboard/delete/': dashboard_delete_layout,
+}
+
+more_layout_content = {
+    '/beha-pulse/main/more/privacy-policy/': more_privacy_layout,
+    '/beha-pulse/main/more/document/': more_document_layout,
+    '/beha-pulse/main/more/information/': more_info_layout,
+    '/beha-pulse/main/more/help/': more_help_layout,
+}
+
+tab_to_layout = {
+    '/beha-pulse/main/': main_layout,
+    '/beha-pulse/main/device/': device_layout,
+    '/beha-pulse/main/control/': control_layout,
+    '/beha-pulse/main/dashboard/': dashboard_layout,
+    '/beha-pulse/main/more/': more_layout,
 }
 
 not_need_login_layout = [
@@ -63,44 +79,23 @@ def set_layout(app):
                 redirect_url = '/beha-pulse/main/'
 
             else:  # 로그인이 되어 있는 데 로그인이 필요한 레이아웃을 요청한 경우
-                if pathname == '/beha-pulse/main/':
-                    layout = main_layout()
+                if pathname in tab_to_layout:
+                    print(1)
+                    layout = tab_to_layout.get(pathname)()
+                elif pathname in device_layout_content:
+                    print(2)
+                    layout = device_layout_content.get(pathname, device_layout)()
+                elif pathname in control_layout_content:
+                    print(3)
+                    layout = control_layout_content.get(pathname)()
+                elif pathname in dashboard_layout_content:
+                    print(4)
+                    layout = dashboard_layout_content.get(pathname)()
+                elif pathname in more_layout_content:
+                    print(5)
+                    layout = more_layout_content.get(pathname)()
 
-                elif pathname in main_to_device_layout:
-                    layout = main_to_device_layout.get(pathname, main_layout)()
-
-                # URL이 이상한 경우
-                elif pathname.startswith('/beha-pulse/') and pathname != '/beha-pulse/main/':
-                    redirect_url = '/beha-pulse/main/'
                 else:  # 로그인이 되어있는 데, 정해지지 않은 URL로 요청한 경우
                     redirect_url = '/beha-pulse/main/'
 
-            # # 로그인이 되어있고 로그인이 필요 있는 레이아웃을 요청하는 경우
-            # else:
-            #     if pathname == '/beha-pulse/main/':
-            #         layout = main_layout()
-            #
-            #     elif pathname.startswith('/beha-pulse/main/') and pathname != '/beha-pulse/main/':
-            #         redirect_url = '/beha-pulse/main/'
-            #
-            #     elif pathname in main_to_device_layout:
-            #         layout = main_to_device_layout.get(pathname, main_layout)()
-            #
-            #     else:
-            #         layout = url_to_layout.get(pathname, main_layout)()
-
         return layout, redirect_url
-
-
-def set_main_content(app):
-    @app.callback(
-        Output('main-content', 'children'),
-        [Input('main-url', 'pathname')]
-    )
-    def display_main_content(pathname):
-        # URL 경로에 따라 콘텐츠를 결정
-        content_function = main_to_sub.get(pathname)
-        if content_function:
-            return content_function()
-        else:
-            return main_content()  # 기본적으로 main_content 반환

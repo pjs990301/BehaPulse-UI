@@ -5,9 +5,12 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import requests
 from dash import Dash, dcc, html, callback_context, no_update
+import json
 
 from ..layout.find_pw import *
 
+with open('config/server.json', 'r') as f:
+    server = json.load(f)
 
 def find_pw_controller(app):
     # 현재 단계에 따른 UI 업데이트
@@ -113,9 +116,10 @@ def find_pw_controller(app):
             if not all([find_pw_data.get(key) for key in required_fields]):
                 return find_pw_data, 5
 
-            url = f'http://192.9.200.141:8000/user/find_password/{find_pw_data["id"]}'
+            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/find_password/{find_pw_data["id"]}'
+
             try:
-                response = requests.get(url)
+                response = requests.get(api_url)
 
                 if response.status_code == 200:
                     response = response.json()
@@ -134,7 +138,7 @@ def find_pw_controller(app):
             if not all([find_pw_data.get(key) for key in required_fields]):
                 return find_pw_data, 5
 
-            api_url = f'http://192.9.200.141:8000/user/find_password/{find_pw_data["id"]}'
+            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/find_password/{find_pw_data["id"]}'
             json = {
                 'securityQuestion': find_pw_data['securityQuestion'],
                 'securityAnswer': find_pw_data['securityAnswer']

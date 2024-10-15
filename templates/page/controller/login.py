@@ -4,7 +4,10 @@ from dash import Dash, dcc, html, callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import requests
+import json
 
+with open('config/server.json', 'r') as f:
+    server = json.load(f)
 
 # 로그인 콜백 함수 정의
 def login_controller(app):
@@ -24,9 +27,10 @@ def login_controller(app):
                 return [{'success': False, 'message': '로그인 정보를 입력해주세요.'}, None]
             else:
                 # 로그인 인증 요청
+                api_url = f"http://{server['server']['host']}:{server['server']['port']}/user/login"
                 try:
                     response = requests.post(
-                        'http://192.9.200.141:8000/user/login',  # 인증 API URL
+                        api_url,
                         json={'userEmail': login_id, 'userPassword': login_password}
                     )
 
@@ -34,6 +38,7 @@ def login_controller(app):
                     if response.status_code == 200:
                         session['login'] = True  # 로그인 성공
                         session['user_id'] = login_id  # 사용자 ID 저장
+                        session['user_name'] = response.json().get('userName')  # 사용자 이름 저장
                         return [{'success': True, 'message': '로그인 성공!'}, '/beha-pulse/main/']  # 메인 페이지 경로로 이동
 
                     # 로그인 실패 시

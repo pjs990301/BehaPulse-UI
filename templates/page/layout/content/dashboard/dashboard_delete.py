@@ -5,24 +5,11 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash.dependencies import Input, Output
 
-from flask import Flask, session
-from dash import Dash, dcc, html
 
-import dash_bootstrap_components as dbc
-import pandas as pd
-from dash.dependencies import Input, Output
-
-# 색상 정의
-status_colors = {
-    "active": "#00D84F",  # 녹색
-    "inactive": "#E10000"  # 빨간색
-}
-
-
-def device_layout():
+def dashboard_delete_layout():
     layout = html.Div([
 
-        dcc.Location(id='device', refresh=True),  # 페이지 이동을 위한 Location
+        dcc.Location(id='dashboard-delete', refresh=True),  # 페이지 이동을 위한 Location
 
         # 오버레이 배경
         html.Div(id='overlay-background', style={
@@ -53,6 +40,47 @@ def device_layout():
                 'position': 'relative',
                 'textAlign': 'center'
             })
+        ], style={
+            'display': 'none',
+            'position': 'fixed',
+            # 'top': '10vh',
+            # 'left': '5vw',
+            # 'transform': 'translate(-10vw, -10vh)',
+            'top': '50%',
+            'left': '50%',
+            'transform': 'translate(-50%, -50%)',
+            'zIndex': 2
+        }),
+
+        # 오버레이 팝업 창
+        html.Div(id='delete-overlay-container', children=[
+            html.Div([
+                html.Div(style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='delete-overlay-text'),
+                html.Div([
+                    html.Div([
+                        html.Div("확인", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer',
+                                              'background': '#003CFF', 'width': '40%', 'border-radius': '8px',
+                                              'color': '#fff'},
+                                 id='delete-confirm-button'),
+                        html.Div("취소", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer',
+                                              'background': '#D5D5D5', 'width': '40%', 'border-radius': '8px',
+                                              'color': '#fff'},
+                                 id='delete-cancel-button')
+                    ], style={'display': 'flex', 'width': '90%', 'justify-content': 'space-around'}),
+                ],
+                    style={'display': 'flex', 'width': '100%', 'justify-content': 'center', 'margin-top': '20px'},
+                    id='delete-overlay-buttons'
+                )
+            ], style={
+                'background': '#fff',
+                'border-radius': '30px',
+                'drop-shadow': '0 4px 4px rgba(0, 0, 0, 0.25)',
+                'width': '40vh',
+                'margin': 'auto',
+                'padding': '20px',
+                'position': 'relative',
+                'textAlign': 'center'
+            }, id='delete-overlay-content')
         ], style={
             'display': 'none',
             'position': 'fixed',
@@ -98,7 +126,7 @@ def device_layout():
 
         # 중앙 영역
         dbc.Container([
-            html.Div(children=device_content(), id='main-content', className='d-flex h-100 w-100'),
+            html.Div(children=dashboard_delete_content(), id='main-content', className='d-flex h-100 w-100'),
         ], className='flex-grow-1'),
 
         # 하단 영역
@@ -112,9 +140,9 @@ def device_layout():
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-home-button'),
                     html.Div([
-                        html.I(className='ic-desktop-selected', id='main-device-button-icon',
+                        html.I(className='ic-desktop', id='main-device-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("장치", className='text-bottom-selected'),
+                        html.Div("장치", className='text-bottom'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-device-button'),
                     html.Div([
@@ -124,9 +152,9 @@ def device_layout():
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-control-button'),
                     html.Div([
-                        html.I(className='ic-health-metrics', id='main-dashboard-button-icon',
+                        html.I(className='ic-health-metrics-selected', id='main-dashboard-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("대시보드", className='text-bottom'),
+                        html.Div("대시보드", className='text-bottom-selected'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-dashboard-button'),
                     html.Div([
@@ -145,61 +173,84 @@ def device_layout():
 
     return layout
 
-# 재사용 가능한 장치 항목 컴포넌트 함수
-def device_item(name, mac_address, status):
-    """장치 항목 컴포넌트"""
-    return html.Div(
-        [
-            # 왼쪽 장치 정보
-            html.Div([
-                html.Div(name, style={'font-weight': 'bold', 'font-size': '20px'}),
-                html.Div(mac_address, style={'color': 'grey', 'font-size': '14px'}),
-            ], style={'display': 'inline-block'}),
 
-            # 오른쪽 상태 아이콘
-            html.Div([
-                html.Span(style={
-                    'backgroundColor': status_colors[status],
-                    'width': '2.5vh',
+status_colors = {
+    "앉아있음": "#DE9200",  # 녹색
+    "누워있음": "#FE0135",  # 빨간색
+    "확인불가": "#C5C5C5"  # 회색
+}
+
+
+def dashboard_check_item(personId, name, gender, birth, status, isChecked=False):
+    """장치 항목 컴포넌트"""
+    return html.Div([
+
+        # 여기 수정
+        dcc.Checklist(
+            options=[{'label': '', 'value': {'personId': personId, 'name': name}}],  # personId와 name을 함께 저장
+            value=[{'personId': personId, 'name': name}] if isChecked else [],  # 체크 여부에 따라 선택 상태 설정
+            id={'type': 'checkbox', 'index': personId},  # personId를 고유 인덱스로 사용
+            className='dashboard-delete-check-box'
+        ),
+        # 왼쪽 유저 정보
+        html.Div([
+            html.Div(name, style={'font-weight': 'bold', 'font-size': '20px'}),
+            html.Div(
+                [
+                    html.Span(gender, style={'color': 'grey', 'font-size': '14px', 'margin-right': '10px'}),
+                    html.Span(birth, style={'color': 'grey', 'font-size': '14px'}),
+                ],
+            ),
+        ], style={'display': 'inline-block'}),
+
+        # 오른쪽 텍스트 출력
+        html.Div([
+            html.Span(
+                status,
+                style={
+                    'color': status_colors[status],
                     'height': '2.5vh',
                     'border-radius': '6px',
-                    'display': 'inline-block'
+                    'font-weight': 'bold',
+                    'display': 'inline-block',
                 })
-            ], style={'display': 'inline-block'}),
+        ], style={'display': 'inline-block'}),
 
-        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center',
-                  'padding': '10px 0px', 'border-bottom': '1px solid #F4F4F4',
-                  'width': '100%'},
+    ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center',
+              'padding': '10px 0px', 'border-bottom': '1px solid #F4F4F4',
+              'width': '100%'},
 
         # 행 전체가 클릭되도록 설정 (n_clicks 속성 추가)
-        id={'type': 'device-row', 'index': mac_address},  # 각 줄에 고유 id 부여
+        id={'type': 'dashboard-row', 'index': personId},  # 각 줄에 고유 id 부여
         n_clicks=0,  # 클릭 수 초기화
     )
 
 
-def device_content():
+def dashboard_delete_content():
     content = html.Div([
-        dcc.Store(id='device-data-store', data={}),  # 데이터를 저장할 숨겨진 Store
         dbc.Row([
             # 제목
-            html.Span("장치 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
+            html.Span("환자 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
 
             dcc.Loading(
                 id="loading-spinner",
                 type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
-                children=html.Div(id='device-rows', className='w-100 mb-3',
-                                  style={'height': '65vh', 'overflow-y': 'auto'},),
+                children=html.Div(id='dashboard-rows', className='w-100 mb-3',
+                                  style={'height': '65vh', 'overflow-y': 'auto'}, ),
             ),
-
             html.Div([
                 dbc.Button([
                     # 아이콘과 텍스트를 버튼 안에 배치
-                    html.I(className='ic-device-add me-1', style={'width': '2rem', 'height': '2rem'}),
-                    html.Span("장치 추가", style={'font-size': '1rem', 'font-weight': 'bold'})
-                ], color="primary", id='device-add-button', href='/beha-pulse/main/device/add/'),
-            ], className='d-flex justify-content-end w-100 p-0')
+                    html.I(className='ic-person-add me-1', style={'width': '2rem', 'height': '2rem'}),
+                    html.Span("인원추가", style={'font-size': '1rem', 'font-weight': 'bold'})
+                ], color="primary", id='dashboard-add-button', href='/beha-pulse/main/dashboard/add/'),
+                dbc.Button([
+                    # 아이콘과 텍스트를 버튼 안에 배치
+                    html.I(className='ic-person-remove me-1', style={'width': '2rem', 'height': '2rem'}),
+                    html.Span("인원삭제", style={'font-size': '1rem', 'font-weight': 'bold'})
+                ], color="danger", id='dashboard-delete-button-confirm')
+            ], className='d-flex w-100 p-0', style={'justify-content': 'space-between'})
         ], className='w-100'),
-
     ], className="d-flex align-items-center flex-column mx-3 h-100 w-100 justify-content-center")
 
     return content

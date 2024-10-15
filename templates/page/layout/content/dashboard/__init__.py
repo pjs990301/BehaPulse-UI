@@ -1,1 +1,3 @@
-from .dashboard import dashboard_content
+from .dashboard import dashboard_layout
+from .dashboard_add import dashboard_add_layout
+from .dashboard_delete import dashboard_delete_layout

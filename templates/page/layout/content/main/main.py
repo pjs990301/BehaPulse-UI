@@ -5,14 +5,9 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash.dependencies import Input, Output
 
-from .content.main import main_content
-
-
 def main_layout():
     layout = html.Div([
-
-        dcc.Location(id='main-url', refresh=False),
-
+        dcc.Location(id='main', refresh=False),  # 페이지 이동을 위한 Location
         # 오버레이 배경
         html.Div(id='overlay-background', style={
             'display': 'none',
@@ -95,29 +90,35 @@ def main_layout():
             html.Div(
                 [
                     html.Div([
-                        html.I(className='ic-home', id='main-home-button',
+                        html.I(className='ic-home-selected', id='main-home-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("홈", style={'font-size': '2vh', 'textAlign': 'center'}),
+                        html.Div("홈", className='text-bottom-selected'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-home-button'),
                     html.Div([
-                        html.I(className='ic-device', id='main-device-button',
+                        html.I(className='ic-desktop', id='main-device-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("장치", style={'font-size': '2vh', 'textAlign': 'center'}),
+                        html.Div("장치", className='text-bottom'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-device-button'),
                     html.Div([
-                        html.I(className='ic-health-metrics', id='main-dashboard-button',
+                        html.I(className='ic-incandescent', id='main-control-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("대시보드", style={'font-size': '2vh', 'textAlign': 'center'}),
+                        html.Div("조명", className='text-bottom'),
+                    ], className='justify-content-center align-items-center d-flex flex-column text-center',
+                        id='main-control-button'),
+                    html.Div([
+                        html.I(className='ic-health-metrics', id='main-dashboard-button-icon',
+                               style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
+                        html.Div("대시보드", className='text-bottom'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
                         id='main-dashboard-button'),
                     html.Div([
-                        html.I(className='ic-person', id='main-user-button',
+                        html.I(className='ic-more', id='main-more-button-icon',
                                style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("유저", style={'font-size': '2vh', 'textAlign': 'center'}),
+                        html.Div("더보기", className='text-bottom'),
                     ], className='justify-content-center align-items-center d-flex flex-column text-center',
-                        id='main-user-button'),
+                        id='main-more-button'),
                 ],
                 className='d-flex justify-content-around align-items-center w-100',
             ),
@@ -127,3 +128,52 @@ def main_layout():
     ], className="min-vh-100 d-flex flex-column bg-white")
 
     return layout
+
+def main_content():
+    content = html.Div([
+
+        dbc.Row([
+            html.Div([
+                html.Img(src='/assets/sample_profile.png',
+                         # object-fit 추후 수정 필요
+                         style={'width': '100%', 'height': '100%', 'objectFit': 'contain'}),
+            ], className='main-profile-circle')
+        ], className='d-flex justify-content-center align-items-center mb-4'),
+
+        # Content Boxes
+        dbc.Row(
+            dbc.Card(
+                dbc.CardBody("내가 관리하는 병원", style={'font-size': '1.2rem'}),
+                className='main-card-body'
+            ),
+            className="main-card-container w-100 mx-3 my-2",
+        ),
+
+        # Content Boxes
+        dbc.Row([
+            dbc.Col([
+                dbc.Card(
+                    dbc.CardBody("내 건강 상태", style={'font-size': '1.2rem'}),
+                    className='main-card-body'
+                ),
+            ], style={'padding-right': '0.5rem', 'padding-left': '0rem'}),
+            dbc.Col([
+                dbc.Card(
+                    dbc.CardBody("내 건강 상태", style={'font-size': '1.2rem'}),
+                    className='main-card-body'
+                ),
+            ], style={'padding-left': '0.5rem', 'padding-right': '0rem'}),
+        ], className="main-card-container w-100 mx-3 my-2", ),
+
+        # Content Boxes
+        dbc.Row(
+            dbc.Card(
+                dbc.CardBody("내 건강 상태", style={'font-size': '1.2rem'}),
+                className='main-card-body'
+            ),
+            className="main-card-container w-100 mx-3 my-2",
+        ),
+
+    ], className="d-flex justify-content-center align-items-center flex-column w-100 h-100",
+    )
+    return content

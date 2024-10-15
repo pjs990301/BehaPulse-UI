@@ -5,9 +5,11 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import requests
 from dash import Dash, dcc, html, callback_context, no_update
-
+import json
 from ..layout.find_id import *
 
+with open('config/server.json', 'r') as f:
+    server = json.load(f)
 
 def find_id_controller(app):
     # 현재 단계에 따른 UI 업데이트
@@ -157,7 +159,7 @@ def find_id_controller(app):
             birth_date = f"{find_id_data['year']}-{find_id_data['month']}-{find_id_data['day']}"
 
             # API 요청 URL
-            api_url = f'http://192.9.200.141:8000/user/find_id/{find_id_data["name"]}/{birth_date}'
+            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/find_id/{find_id_data["name"]}/{birth_date}'
 
             try:
                 # API 호출

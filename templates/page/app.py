@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 
 # layout
 # from .layout import set_layout, set_content
-from .layout import set_layout, set_main_content
+from .layout import set_layout
 
 # controller
 from .controller import set_controller
@@ -27,7 +27,6 @@ admin_app._favicon = "img/favicon.svg"
 
 # layout setting
 set_layout(admin_app)
-set_main_content(admin_app)
 
 # controller setting
 set_controller(admin_app)
