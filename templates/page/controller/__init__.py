@@ -7,6 +7,8 @@ def set_controller(app):
     from .device import device_controller
     from .sidebar import sidebar_controller, toggler_controller
     from .dashboard import dashboard_controller
+    from .smartthings import smartthings_controller
+    from .smartthings_device import smartthings_device_controller
 
     login_controller(app)
     signup_controller(app)
@@ -15,6 +17,5 @@ def set_controller(app):
     device_controller(app)
     sidebar_controller(app)
     dashboard_controller(app)
-
-
-
+    smartthings_controller(app)
+    smartthings_device_controller(app)

@@ -4,7 +4,7 @@ from dash import Dash, dcc, html, callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import requests
-
+import os
 
 def login_controller(app):
     @app.callback(Output('login-message', 'children'),
@@ -18,21 +18,21 @@ def login_controller(app):
         if not email or not password:
             return dbc.Alert("이메일과 비밀번호를 모두 입력해주세요.", color="danger")
 
-        api_url = "http://192.9.200.141:8000/user/login"
+        api_url = f"{os.getenv('SERVER_IP')}/user/login"
         data = {
             "userEmail": email,
             "userPassword": password
         }
 
         try:
-            response = requests.post(api_url, json=data)
+            response = requests.post(api_url, json=data, verify=False)
 
             # Handle the response
             if response.status_code == 200:
                 # return dbc.Alert("로그인 성공!", color="success")
-                api_url = f"http://192.9.200.141:8000/user/{email}"
+                api_url = f"{os.getenv('SERVER_IP')}/user/{email}"
                 try:
-                    user_response = requests.get(api_url)
+                    user_response = requests.get(api_url, verify=False)
                     if user_response.status_code == 200:
                         session['logged_in'] = True
                         session['user_email'] = user_response.json()['user']['userEmail']

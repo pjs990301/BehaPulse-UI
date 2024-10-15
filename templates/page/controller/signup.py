@@ -6,6 +6,11 @@ from dash.dependencies import Input, Output, State
 import requests
 from dash import Dash, dcc, html, callback_context, no_update
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
+import os
+
 
 def signup_controller(app):
     @app.callback(Output('signup-message', 'children'),
@@ -29,7 +34,7 @@ def signup_controller(app):
         if '@' not in email:
             return dbc.Alert("올바른 이메일 형식이 아닙니다.", color='danger')
 
-        api_url = "http://192.9.200.141:8000/user/register"
+        api_url = os.getenv('SERVER_IP') + "/user/register"
         data = {
             "userEmail": email,
             "userName": name,
@@ -38,7 +43,7 @@ def signup_controller(app):
             "securityAnswer": answer
         }
         try:
-            response = requests.post(api_url, json=data)
+            response = requests.post(api_url, json=data, verify=False)
             if response.status_code == 201:
                 return dbc.Alert("회원가입 성공!", color="success")
             elif response.status_code == 400:

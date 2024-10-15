@@ -30,6 +30,11 @@ def sidebar():
                          html.P("Dashboard", className="m-0")],
                         # active="exact",
                         href="/admin/dashboard", className="custom-navlink my-4"),
+                    dbc.NavLink(
+                        [html.I(id="prime--chart-line", style={'height': '5vh', 'width': '5vh'}),
+                         html.P("SmartThings Sync", className="m-0")],
+                        # active="exact",
+                        href="/admin/smartthings", className="custom-navlink my-4"),
                 ],
                 vertical=True,
                 pills=True,
