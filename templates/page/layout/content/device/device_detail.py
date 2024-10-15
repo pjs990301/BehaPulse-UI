@@ -7,8 +7,19 @@ from dash.dependencies import Input, Output
 
 
 # 재사용 가능한 장치 항목 컴포넌트 함수
-def info_row(icon_class, label, value):
+def info_row(icon_class, label, value, status=None):
     """장치 항목 컴포넌트"""
+    # 상태에 따른 색상 설정
+    if status == "ON":
+        value_color = "#00D84F"
+        font_weight = 'bold'  # 녹색
+    elif status == "OFF":
+        value_color = "#E10000"  # 빨간색
+        font_weight = 'bold'
+    else:
+        value_color = "#9C9C9C"  # 기본 색상 (회색)
+        font_weight = 'normal'
+
     return html.Div(
         [
             # 왼쪽 아이콘
@@ -16,28 +27,28 @@ def info_row(icon_class, label, value):
                 html.I(className=icon_class, style={'height': '5vh', 'width': '5vh'}),
             ], style={'display': 'flex', 'background-color': '#EEEEEE',
                       'justify-content': 'center', 'align-items': 'center',
-                      'border-radius': '10px', 'width': '7vh', 'height': '7vh'
+                      'border-radius': '10px', 'width': '7vh', 'height': '7vh',
+                      'margin-right': '20px'
                       },
-                id='device-detail-icon'),
+            ),
             # 중앙 라벨
             html.Div([
                 html.Span(label, style={'font-size': '1rem'}),
-            ], style={'display': 'inline-block'}, id='device-detail-label'),
+            ], style={'display': 'inline-block', 'width': '25%'}),
 
             # 오른쪽 값
             html.Div([
-                html.Span(value, style={'color': '#9C9C9C', 'font-size': '1rem'}),
-            ], style={'display': 'inline-block'}, id='device-detail-value'),
+                html.Span(value, style={'color': value_color, 'font-size': '1rem', 'font-weight': font_weight}),
+            ], style={'display': 'inline-block', 'width': '55%', 'text-align': 'center'}),
 
-        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center',
-                  'padding': '10px 0px', 'width': '90%'},
+        ], style={'display': 'flex', 'justify-content': 'start', 'align-items': 'center',
+                  'padding': '10px 0px', 'width': '95%'},
     )
 
 
 def device_detail_layout():
     layout = html.Div([
-        dcc.Location(id='device-detail-url', refresh=True),
-        html.Div(id='dummy-output', style={'display': 'none'}),  # Dummy Output 추가
+        dcc.Location(id='device-detail', refresh=True),
         dbc.Container([
             # 상단 영역: 뒤로가기 아이콘과 타이틀
             html.Div([
@@ -58,32 +69,26 @@ def device_detail_layout():
                         className="d-flex align-items-center justify-content-center",
                         width="auto"
                     ),
-                ], className="align-items-center my-5 justify-content-center", )
+                ], className="align-items-center mt-5 justify-content-center", )
 
             ],
                 id='device-detail-header-content',
                 className="d-flex justify-content-start mx-3",
             ),
 
-            html.Div([
-                info_row('ic-manufacturing', 'ESP32', '장치'),
-                info_row('ic-computer', '00:00:00:00:00:00', '장치'),
-                info_row('ic-local-hospital', '길병원', '장치'),
-                info_row('ic-location-on', '123호', '장치'),
-                info_row('ic-calendar-month', '20240808', '장치'),
-                info_row('ic-offline-bolt', 'ON', '장치'),
-                info_row('ic-display-settings', '기기 변경 필요', '장치'),
-                info_row('ic-person-device', '김철수', '장치'),
-            ],
-                className="d-flex flex-column justify-content-center align-items-center my-2",
-                id='device-detail-main-content'
+            dcc.Loading(
+                id="loading-spinner",
+                type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
+                children=html.Div(id='device-detail-main-content',
+                                  className="d-flex flex-column justify-content-center align-items-center my-3",
+                                  style={'height': '75vh'}),
             ),
             html.Div([
                 dbc.Button([
                     # 아이콘과 텍스트를 버튼 안에 배치
                     html.I(className='ic-edit me-1', style={'width': '2rem', 'height': '2rem'}),
                     html.Span("수정하기", style={'font-size': '1rem', 'font-weight': 'bold'})
-                ], color="primary", id='device-edit-button'),
+                ], color="primary", id='device-edit-button', href='/beha-pulse/main/device/edit/'),
                 dbc.Button([
                     # 아이콘과 텍스트를 버튼 안에 배치
                     html.I(className='ic-delete me-1', style={'width': '2rem', 'height': '2rem'}),
