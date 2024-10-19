@@ -77,16 +77,8 @@ def more_layout():
                         className="d-flex align-items-center justify-content-center",
                         width="auto"
                     ),
-                    dbc.Col(
-                        html.I(className='ic-arrow-forward',
-                               style={'font-size': '1.2rem', 'width': '1.5rem', 'height': '1.5rem',
-                                      'cursor': 'pointer'},
-                               ),
-                        className="d-flex align-items-center justify-content-center",
-                        width="auto",
-                    ),
 
-                ], className="align-items-center my-5 justify-content-center", )
+                ], className="align-items-center mt-4 mb-3 justify-content-center", )
 
             ],
                 id='more-header-content',
@@ -150,16 +142,22 @@ def more_content():
         dbc.Row(
             html.Div([
                 ""
-            ], style={'background': '#F4F4F4', 'border-radius': '7px', 'width': '100%', 'height': '10vh',
-                      'font-size': '2vh'}, id='more-id',
+            ], style={'background': '#F4F4F4', 'border-radius': '7px', 'width': '100%', 'height': '7vh',
+                      'font-size': '1.25rem'}, id='more-id',
                 className="d-flex align-items-center p-3")
             , className="w-100"),
         html.Div([
-            more_item("ic-logout", "로그아웃"),
+            more_item("ic-sensors", "동작 민감도 설정"),
+            more_item("ic-hub", "SmartThings 설정"),
+            more_item("", ""),
             more_item("ic-privacy-tip", "개인정보 방침 조항"),
             more_item("ic-description", "이용약관"),
             more_item("ic-info", "앱 정보"),
-            more_item("ic-live-help", "도움말")
+            more_item("ic-live-help", "도움말"),
+            more_item("", ""),
+            more_item("ic-key", "비밀번호 변경"),
+            more_item("ic-logout", "로그아웃"),
+
         ], className='w-100 mt-4')
 
     ], className="d-flex align-items-center flex-column mx-3 h-100 w-100 justify-content-center")
@@ -175,7 +173,7 @@ def more_item(icon_class, label):
                 html.I(className=icon_class, style={'height': '5vh', 'width': '5vh'}),
             ], style={'display': 'flex',
                       'justify-content': 'center', 'align-items': 'center',
-                      'border-radius': '10px', 'width': '7vh', 'height': '7vh',
+                      'border-radius': '10px', 'width': '5vh', 'height': '5vh',
                       'margin-right': '20px',
                       },
             ),
@@ -185,7 +183,7 @@ def more_item(icon_class, label):
             ], style={'display': 'inline-block'}),
 
         ], style={'display': 'flex', 'justify-content': 'start', 'align-items': 'center',
-                  'padding': '10px 0px', 'width': '95%', 'cursor': 'pointer','border-bottom': '1px solid #F4F4F4',},
+                  'padding': '5px 0px', 'width': '95%', 'cursor': 'pointer', 'border-bottom': '1px solid #F4F4F4',},
 
         id={'type': 'more-item', 'index': label},
         n_clicks=0

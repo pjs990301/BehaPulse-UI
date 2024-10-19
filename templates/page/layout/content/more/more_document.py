@@ -29,7 +29,7 @@ def more_document_layout():
                         className="d-flex align-items-center justify-content-center",
                         width="auto"
                     ),
-                ], className="align-items-center mt-5 mb-3 justify-content-center", )
+                ], className="align-items-center mt-4 mb-3 justify-content-center", )
 
             ],
                 className="d-flex justify-content-start mx-3",
@@ -38,7 +38,7 @@ def more_document_layout():
 
         dbc.Container([
             html.Div(children=more_privacy_content(), id='main-content', className='d-flex w-100',
-                     style={'height': '75vh', 'overflow-y': 'scroll'}),
+                     style={'height': '75vh', 'overflow-y': 'auto'}),
         ], className='flex-grow-1'),
 
         # 하단 영역

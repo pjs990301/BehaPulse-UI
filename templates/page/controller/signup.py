@@ -292,11 +292,11 @@ def signup_controller(app):
                 signup_data['id_validated'] = False
                 return signup_data
 
-            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/check-email/{user_id}'
+            api_url = f'{server["server"]["protocol"]}://{server["server"]["host"]}:{server["server"]["port"]}/user/check-email/{user_id}'
 
             # ID 중복 확인 API 호출
             try:
-                response = requests.get(api_url)
+                response = requests.get(api_url, verify=server["server"]["verify"])
                 if response.status_code == 200:
                     # ID가 이미 존재할 경우
                     signup_data['id_validated'] = False  # 중복됨
@@ -308,6 +308,36 @@ def signup_controller(app):
                     signup_data['id_validated'] = False
             except requests.exceptions.RequestException:
                 signup_data['id_validated'] = False
+        return signup_data
+
+    # ID 중복 확인 결과에 따라 버튼 색상 업데이트 콜백
+    @app.callback(
+        Output('sign-duplicate-check-btn', 'style'),  # 버튼의 스타일 업데이트
+        [Input('signup-data-store', 'data')]  # signup_data 상태를 감지
+    )
+    def update_button_color(signup_data):
+        # 기본 스타일 설정
+        button_style = {'background-color': '#FF0000'}  # 기본 색상 (빨간색)
+
+        # signup_data가 있는지 확인하고, 'id_validated' 값에 따라 색상 변경
+        if signup_data and signup_data.get('id_validated'):
+            button_style['background-color'] = '#00C443'  # ID가 사용 가능할 때 색상 변경 (녹색)
+
+        return button_style
+
+    @app.callback(
+        Output('signup-data-store', 'data', allow_duplicate=True),
+        [Input('sign-input-id', 'value')],
+        [State('signup-data-store', 'data')]
+        , prevent_initial_call=True
+    )
+    def reset_id_validation(user_id, signup_data):
+        # signup_data가 비어 있을 경우 초기화
+        if not signup_data:
+            signup_data = {}
+
+        # ID 입력이 변경되면 id_validated를 초기화 (False로 설정)
+        signup_data['id_validated'] = False
         return signup_data
 
     # 새로운 회원가입 API 호출 콜백 추가
@@ -341,10 +371,10 @@ def signup_controller(app):
                 "securityAnswer": signup_data['securityAnswer'],
                 "birthDate": birth_date
             }
-            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/register'
+            api_url = f'{server["server"]["protocol"]}://{server["server"]["host"]}:{server["server"]["port"]}/user/register'
             # 회원가입 API 요청
             try:
-                response = requests.post(api_url, json=payload)
+                response = requests.post(api_url, json=payload, verify=server["server"]["verify"])
 
                 if response.status_code == 201:
                     # 회원가입 성공 시 step을 7로 설정

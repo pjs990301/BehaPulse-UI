@@ -9,8 +9,6 @@ import dash_daq as daq
 
 def control_color_layout():
     layout = html.Div([
-        dcc.Store(id='control-data-store', data={}),
-
         dbc.Container([
             # 상단 영역: 뒤로가기 아이콘과 타이틀
             html.Div([
@@ -31,7 +29,7 @@ def control_color_layout():
                         className="d-flex align-items-center justify-content-center",
                         width="auto"
                     ),
-                ], className="align-items-center mt-5 mb-5 justify-content-center", )
+                ], className="align-items-center mt-4 mb-3 justify-content-center", )
 
             ],
                 className="d-flex justify-content-start mx-3",
@@ -39,49 +37,13 @@ def control_color_layout():
         ]),
 
         dbc.Container([
-            html.Div(children=control_content(), id='main-content', className='d-flex w-100', )
-        ], className='flex-grow-1'),
+            dcc.Loading(
+                id="loading-spinner",
+                type="circle",
+                children=html.Div(children=control_content(), id='main-content', className='d-flex w-100 h-100')
+            )
+        ],className='flex-grow-1')
 
-        # 하단 영역
-        dbc.Container([
-            html.Div(
-                [
-                    html.Div([
-                        html.I(className='ic-home', id='main-home-button-icon',
-                               style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("홈", className='text-bottom'),
-                    ], className='justify-content-center align-items-center d-flex flex-column text-center',
-                        id='main-home-button'),
-                    html.Div([
-                        html.I(className='ic-desktop', id='main-device-button-icon',
-                               style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("장치", className='text-bottom'),
-                    ], className='justify-content-center align-items-center d-flex flex-column text-center',
-                        id='main-device-button'),
-                    html.Div([
-                        html.I(className='ic-incandescent-selected', id='main-control-button-icon',
-                               style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("조명", className='text-bottom-selected'),
-                    ], className='justify-content-center align-items-center d-flex flex-column text-center',
-                        id='main-control-button'),
-                    html.Div([
-                        html.I(className='ic-health-metrics', id='main-dashboard-button-icon',
-                               style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("대시보드", className='text-bottom'),
-                    ], className='justify-content-center align-items-center d-flex flex-column text-center',
-                        id='main-dashboard-button'),
-                    html.Div([
-                        html.I(className='ic-more', id='main-more-button-icon',
-                               style={'cursor': 'pointer', 'width': '5vh', 'height': '5vh'}),
-                        html.Div("더보기", className='text-bottom'),
-                    ], className='justify-content-center align-items-center d-flex flex-column text-center',
-                        id='main-more-button'),
-                ],
-                className='d-flex justify-content-around align-items-center w-100',
-            ),
-        ],
-            className='w-100 d-flex justify-content-end align-items-center mb-1',
-            style={'height': '10vh', 'border-top': '1px solid rgba(0, 0, 0, 0.1)'}),
     ], className="min-vh-100 d-flex flex-column bg-white")
 
     return layout
@@ -89,51 +51,66 @@ def control_color_layout():
 
 def control_content():
     content = html.Div([
+        dcc.Store(id='color-data-store', data={}),  # 데이터를 저장할 숨겨진 Store
+
         # Brightness Slider
         html.Div([
-            dcc.Slider(
-                id='brightness-slider',
-                min=0,
-                max=100,
-                value=50,
-                marks={0: '0%', 100: '100%'},
-                step=1
-            ),
             html.Div([
-                html.Span('🌞', style={'font-size': '20px', 'margin-right': '10px'}),
-                html.Span('🌞', style={'font-size': '20px', 'margin-left': '10px'}),
-            ], style={'display': 'flex', 'justify-content': 'space-between', 'width': '100%', 'margin-top': '-10px'}),
-        ], style={'margin-bottom': '20px'}),
+                html.Span(className='ic-light-left', style={'margin-right': '10px', 'width': '5vh', 'height': '5vh'}),
 
-        # Color Wheel using iro.js
-        html.Div([
-            html.Div(id="colorWheel", style={'height': '250px', 'width': '250px', 'margin': '0 auto'}),
-            html.Div(id='selected-color', style={'textAlign': 'center', 'marginTop': '20px', 'fontSize': '20px'}),
-        ], style={'textAlign': 'center'}),
+                dcc.Slider(id='brightness-slider',
+                           min=0,
+                           max=100,
+                           value=50,
+                           marks={0: '', 100: ''},  # 빈 공간으로 양쪽 마크
+                           step=1,
+                           tooltip={'placement': 'bottom', 'always_visible': False},
+                           updatemode='drag',  # 슬라이더를 드래그할 때 업데이트
+                           className="flex-grow-1 p-0",
+                           ),  # 슬라이더가 영역을 차지하게 함),
+                html.Span(className='ic-light-right', style={'margin-left': '10px', 'width': '5vh', 'height': '5vh'}),
 
-        # Save Button
-        html.Div([
-            dbc.Button('저장하기', id='save-button', color='primary', size='lg', style={'width': '100%'})
-        ], style={'text-align': 'center', 'margin-top': '30px', 'padding': '0 20px'}),
+            ], style={'background': '#EEEEEE', 'border-radius': '25px', 'transform: ': 'matrix(-1, 0, 0, 1, 0, 0)',
+                      'justify-content': 'space-between',
+                      'width': '100%', 'height': '7vh', 'display': 'flex', 'align-items': 'center',
+                      'padding': '0 20px'}),
+        ], style={'margin-bottom': '20px', 'width': '100%'}),
 
-        # Load the iro.js library from the correct CDN version (stable)
-        html.Script(src="https://cdn.jsdelivr.net/npm/@jaames/iro@5.5.0/dist/iro.min.js"),
+        # Create canvas for color wheel
+        html.Canvas(id='colorWheelCanvas', style={'border-radius': '50%', 'cursor': 'pointer', 'margin-top':'5vh'},
+                    width=300, height=300),
 
-        # JavaScript to initialize the color picker
-        html.Script('''
-        document.addEventListener('DOMContentLoaded', function() {
-            var colorPicker = new iro.ColorPicker("#colorWheel", {
-                width: 250,
-                color: "#18E8FF",
-                borderWidth: 1,
-                borderColor: "#00A9E0",
-            });
-            colorPicker.on('color:change', function(color) {
-                // Send color to Dash
-                const hexColor = color.hexString;
-                document.getElementById('selected-color').innerHTML = 'Selected Color: ' + hexColor;
-            });
-        });
-    ''')
-    ])
+        dbc.Row([
+            html.Div(
+                [
+                    html.I(id='colorDisplay', style={'width': '4vh', 'height': '4vh', 'border-radius': '50%', 'background': '#FFFFFF'}),
+                    html.Span(style={'font-size': '1rem'}, id='selectedColor'),
+                    html.I(style={'width': '4vh', 'height': '4vh'}),
+                ]
+                , style={'background': '#FFFFFF', 'box-shadow': '0px 0px 17px 2px rgba(0, 0, 0, 0.13)',
+                         'border-radius': '15px', 'width': '80%', 'height': '7vh', 'display': 'flex',
+                         'align-items': 'center', 'justify-content': 'space-between'}
+            )
+        ], className="w-100 p-0", style={'margin-top': '5vh', 'display': 'flex', 'justify-content': 'center', 'margin-bottom': '2vh'}),
+
+
+        dbc.Container([
+            dbc.Row(
+                dbc.Button("저장하기",
+                           id='control-color-save-button',
+                           style={
+                               'font-size': '1.2rem',  # 폰트 크기 설정
+                               'height': '50px',  # 버튼 높이 설정
+                               'border-radius': '10px',  # 모서리 둥글기 설정
+                               'text-align': 'center',  # 텍스트 가로 정렬 (중앙)
+                               'display': 'flex',  # Flexbox 사용
+                               'justify-content': 'center',  # Flexbox로 가로 가운데 정렬
+                               'align-items': 'center'  # Flexbox로 세로 가운데 정렬
+                           }),
+                className='justify-content-center my-3 align-items-center w-100'
+            )], className="d-flex flex-column align-items-center justify-content-end flex-grow-0 w-100"
+
+        ),
+
+    ], className="d-flex align-items-center flex-column mx-3 w-100 justify-content-center h-100")
     return content

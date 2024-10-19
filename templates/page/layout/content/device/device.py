@@ -38,12 +38,7 @@ def device_layout():
 
         # 오버레이 팝업 창
         html.Div(id='overlay-container', children=[
-            html.Div([
-                html.Div("길병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='gil-button'),
-                html.Div("아산병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='asan-button'),
-                html.Div("중앙병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'},
-                         id='jungang-button')
-            ], style={
+            html.Div(style={
                 'background': '#fff',
                 'border-radius': '30px',
                 'drop-shadow': '0 4px 4px rgba(0, 0, 0, 0.25)',
@@ -52,7 +47,7 @@ def device_layout():
                 'padding': '20px',
                 'position': 'relative',
                 'textAlign': 'center'
-            })
+            }, id='overlay-content')
         ], style={
             'display': 'none',
             'position': 'fixed',
@@ -71,10 +66,10 @@ def device_layout():
             html.Div([
                 dbc.Row([
                     dbc.Col(
-                        html.Span("미사1동",
+                        html.Span("",
                                   style={'font-weight': 'bold', 'color': '#3F3F3F', 'font-size': '1.5rem',
                                          'justify-content': 'center', 'align-items': 'center',
-                                         'display': 'flex'}),
+                                         'display': 'flex'}, id='main-location'),
                         className="d-flex align-items-center justify-content-center",
                         style={'padding-right': '0.25rem'},
                         width="auto",
@@ -89,7 +84,7 @@ def device_layout():
                         width="auto",
                     ),
 
-                ], className="align-items-center mt-5 mb-3 justify-content-center", )
+                ], className="align-items-center mt-4 mb-3 justify-content-center", )
 
             ],
                 className="d-flex justify-content-start mx-3",
@@ -145,6 +140,7 @@ def device_layout():
 
     return layout
 
+
 # 재사용 가능한 장치 항목 컴포넌트 함수
 def device_item(name, mac_address, status):
     """장치 항목 컴포넌트"""
@@ -188,7 +184,7 @@ def device_content():
                 id="loading-spinner",
                 type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
                 children=html.Div(id='device-rows', className='w-100 mb-3',
-                                  style={'height': '65vh', 'overflow-y': 'auto'},),
+                                  style={'height': '65vh', 'overflow-y': 'auto'}, ),
             ),
 
             html.Div([

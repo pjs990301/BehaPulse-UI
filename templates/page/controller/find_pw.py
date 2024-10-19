@@ -116,10 +116,10 @@ def find_pw_controller(app):
             if not all([find_pw_data.get(key) for key in required_fields]):
                 return find_pw_data, 5
 
-            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/find_password/{find_pw_data["id"]}'
+            api_url = f'{server["server"]["protocol"]}://{server["server"]["host"]}:{server["server"]["port"]}/user/find_password/{find_pw_data["id"]}'
 
             try:
-                response = requests.get(api_url)
+                response = requests.get(api_url, verify=server["server"]["verify"])
 
                 if response.status_code == 200:
                     response = response.json()
@@ -138,14 +138,14 @@ def find_pw_controller(app):
             if not all([find_pw_data.get(key) for key in required_fields]):
                 return find_pw_data, 5
 
-            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/find_password/{find_pw_data["id"]}'
+            api_url = f'{server["server"]["protocol"]}://{server["server"]["host"]}:{server["server"]["port"]}/user/find_password/{find_pw_data["id"]}'
             json = {
                 'securityQuestion': find_pw_data['securityQuestion'],
                 'securityAnswer': find_pw_data['securityAnswer']
             }
 
             try:
-                response = requests.post(api_url, json=json)
+                response = requests.post(api_url, json=json, verify=server["server"]["verify"])
                 if response.status_code == 200:
                     response = response.json()
                     find_pw_data['tempPassword'] = response['temporaryPassword']

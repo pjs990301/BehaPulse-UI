@@ -5,3 +5,5 @@ from .dashboard import dashboard_ns
 from .user_dashboard import user_dashboard_ns
 from .user_dashboard_device import user_dashboard_device_ns
 from .color_brightness import color_brightness_ns
+from .sensitivity import sensitivity_ns
+from .state_inference import state_inference_ns

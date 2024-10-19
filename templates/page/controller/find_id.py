@@ -159,17 +159,16 @@ def find_id_controller(app):
             birth_date = f"{find_id_data['year']}-{find_id_data['month']}-{find_id_data['day']}"
 
             # API 요청 URL
-            api_url = f'http://{server["server"]["host"]}:{server["server"]["port"]}/user/find_id/{find_id_data["name"]}/{birth_date}'
+            api_url = f'{server["server"]["protocol"]}://{server["server"]["host"]}:{server["server"]["port"]}/user/find_id/{find_id_data["name"]}/{birth_date}'
 
             try:
                 # API 호출
-                response = requests.get(api_url)
+                response = requests.get(api_url, verify=server["server"]["verify"])
 
                 # 응답이 성공적일 때
                 if response.status_code == 200:
                     response_data = response.json()
                     find_id_data['userEmails'] = response_data.get('userEmails', [])
-                    print(find_id_data)
                     return find_id_data, 3
 
                 # 이메일이 존재하지 않을 때

@@ -17,7 +17,7 @@ user_ns = Namespace('user', description='User API', doc='/user', path='/user')
 user_field = user_ns.model('UserModel', user_model)
 login_field = user_ns.model('LoginModel', login_model)
 security_question_field = user_ns.model('SecurityQuestionModel', security_question_model)
-
+st_token_field = user_ns.model('SmartThingsTokenModel', st_token_model)
 
 @user_ns.route('/register')
 class RegisterResource(Resource):
@@ -368,3 +368,173 @@ class FindPasswordResource(Resource):
         finally:
             cursor.close()
             db.close()
+
+
+@user_ns.route('/update/password/<string:userEmail>')
+class changePasswordResource(Resource):
+    def put(self, userEmail):
+        """
+        비밀번호 변경
+        """
+        if not request.is_json:
+            return {'message': 'Missing JSON in request'}, 400
+
+        data = request.json
+
+        required_keys = ['oldPassword', 'newPassword']
+        if not all(key in data for key in required_keys):
+            return {"message": "Missing required fields."}, 400
+
+        old_password = data['oldPassword']
+        new_password = data['newPassword']
+
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+
+        try:
+            # 이전 비밀번호 일치 여부 확인
+            query = "SELECT userPassword FROM user WHERE userEmail = %s"
+            cursor.execute(query, (userEmail,))
+            user_password = cursor.fetchone()
+
+            if not user_password:
+                return {'message': 'User not found'}, 404
+
+            if user_password[0] != old_password:
+                return {'message': 'Old password incorrect'}, 400
+
+            # 비밀번호 변경
+            update_query = "UPDATE user SET userPassword = %s WHERE userEmail = %s"
+            cursor.execute(update_query, (new_password, userEmail))
+            db.commit()
+
+            return {'message': 'Password updated successfully'}, 200
+
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+        finally:
+            db.close()
+            cursor.close()
+
+
+@user_ns.route('/delete_st_token/<string:userEmail>')
+class DeleteTokenResource(Resource):
+    def delete(self, userEmail):
+        """
+        등록되어 있던 SmartThings Token 삭제 (access_token, refresh_token)
+        """
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+        try:
+            # 유저 존재 여부 확인
+            query = "SELECT * FROM user WHERE userEmail = %s"
+            cursor.execute(query, (userEmail,))
+            existing_user = cursor.fetchone()
+
+            if not existing_user:
+                return {'message': 'User not found'}, 404
+
+            # 토큰 삭제 (null로 설정)
+            query = "UPDATE user SET stAccessToken = NULL, stRefreshToken = NULL WHERE userEmail = %s"
+            cursor.execute(query, (userEmail,))
+            db.commit()
+
+            return {'message': 'successfully delete token'}, 200
+
+        except Exception as e:
+            db.rollback()
+            return {'message': str(e)}, 500
+        finally:
+            db.close()
+            cursor.close()
+
+
+@user_ns.route('/st_token/<string:userEmail>')
+class GetTokenResource(Resource):
+    def get(self, userEmail):
+        """
+        특정 유저의 토큰 조회
+        """
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+
+        try:
+            query = "SELECT stAccessToken, stRefreshToken FROM user WHERE userEmail = %s"
+            cursor.execute(query, (userEmail,))
+            user = cursor.fetchone()
+
+            if not user:
+                return {'message': 'User not found'}, 404
+
+            user_data = {
+                'stAccessToken': user[0],
+                'stRefreshToken': user[1],
+            }
+
+            return {'user': user_data}, 200
+
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+        finally:
+            db.close()
+            cursor.close()
+
+
+@user_ns.route('/set_st_token/<string:userEmail>')
+class SetTokenResource(Resource):
+    @user_ns.expect(st_token_field, validate=True)
+    def post(self, userEmail):
+        if not request.is_json:
+            return {'message': 'Missing JSON in request'}, 400
+
+        data = request.json
+
+        required_keys = ['stAccessToken', 'stRefreshToken']
+        if not all(key in data for key in required_keys):
+            return {"message": "Missing required fields."}, 400
+
+        stAccessToken = data['stAccessToken']
+        stRefreshToken = data['stRefreshToken']
+
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor()
+        try:
+            query = "UPDATE user SET stAccessToken = %s, stRefreshToken = %s WHERE userEmail = %s"
+            cursor.execute(query, (stAccessToken, stRefreshToken, userEmail,))
+            db.commit()
+
+            return {'message': 'user registered successfully'}, 201
+
+        except Exception as e:
+            db.rollback()
+            return {'message': str(e)}, 500
+
+        finally:
+            db.close()
+            cursor.close()

@@ -6,6 +6,10 @@ import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output
 
+def overlay_item(label):
+    return html.Div(label, style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'},
+                    id={'type': 'overlay_location', 'index': label},  # 각 줄에 고유 id 부여
+                    )
 
 def dashboard_add_layout():
     layout = html.Div([
@@ -25,7 +29,7 @@ def dashboard_add_layout():
                         width="auto",
                     ),
                     dbc.Col(
-                        html.Span("환자 등록",
+                        html.Span("장치 사용자 등록",
                                   style={'font-weight': 'bold', 'color': '#3F3F3F', 'font-size': '1.5rem',
                                          'justify-content': 'center', 'align-items': 'center',
                                          'display': 'flex'}),
@@ -93,7 +97,7 @@ def get_step_content(step):
 
 def dashboard_add_step_1_content():
     middle_content = dbc.Row(
-        html.P(["환자의 이름을 입력해주세요"],
+        html.P(["사용자의 이름을 입력해주세요"],
                className='dashboard-add-text-content-value'),
     )
 
@@ -109,7 +113,7 @@ def dashboard_add_step_1_content():
 def dashboard_add_step_2_content():
     # 중간 영역: 설명 텍스트
     middle_content = dbc.Row(
-        html.P(["환자의 생년월일을 입력해주세요"],
+        html.P(["사용자의 생년월일을 입력해주세요"],
                className='dashboard-add-text-content-value'),
     )
 
@@ -154,7 +158,7 @@ def dashboard_add_step_2_content():
 
 def dashboard_add_step_3_content():
     middle_content = dbc.Row(
-        html.P(["환자의 성별을 입력해주세요"],
+        html.P(["사용자의 성별을 입력해주세요"],
                className='dashboard-add-text-content-value'),
     )
 
@@ -183,7 +187,7 @@ def dashboard_add_final_content():
                       'font-weight': 'bold', 'text-align': 'center',
                       'margin-top': '10vh', 'margin-bottom': '10px'
                       }),
-        html.H3(f"환자 등록이 완료되었습니다.",
+        html.H3(f"사용자 등록이 완료되었습니다.",
                 style={'color': '#000000', 'font-weight': 'bold',
                        'text-align': 'center'}, id='dashboard-add-final-name'),
     ], className="d-flex flex-column align-items-center justify-content-center text-center my-5")

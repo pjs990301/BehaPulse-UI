@@ -6,6 +6,32 @@ import pandas as pd
 from dash.dependencies import Input, Output
 
 
+def edit_click(icon_class, label, value, placeholder):
+    # 상태에 따른 색상 설정
+    return html.Div(
+        [
+            # 왼쪽 아이콘
+            html.Div([
+                html.I(className=icon_class, style={'height': '5vh', 'width': '5vh'}),
+            ], style={'display': 'flex', 'background-color': '#EEEEEE',
+                      'justify-content': 'center', 'align-items': 'center',
+                      'border-radius': '10px', 'width': '7vh', 'height': '7vh',
+                      'margin-right': '20px'
+                      },
+            ),
+            # 중앙 라벨
+            # get_Input(label, value, placeholder),
+            html.Div([
+                html.Div(value,
+                         id=f'device-edit-input-{label}',
+                         className='device-edit-input', style={'display':'flex', 'align-items':'center'},
+                         )
+            ], style={'display': 'inline-block', 'width': '80%', 'height': '7vh'}, ),
+        ], style={'display': 'flex', 'justify-content': 'start', 'align-items': 'center',
+                  'padding': '10px 0px', 'width': '95%'}, n_clicks=0
+    )
+
+
 def edit_row(icon_class, label, value, placeholder):
     # 상태에 따른 색상 설정
     return html.Div(
@@ -19,7 +45,8 @@ def edit_row(icon_class, label, value, placeholder):
                       'margin-right': '20px'
                       },
             ),
-
+            # 중앙 라벨
+            # get_Input(label, value, placeholder),
             html.Div([
                 dcc.Input(type='text',
                           placeholder=placeholder,
@@ -27,8 +54,7 @@ def edit_row(icon_class, label, value, placeholder):
                           value=value,
                           className='device-edit-input'
                           )
-            ], style={'display': 'inline-block', 'width': '80%', 'height': '7vh'},
-            ),
+            ], style={'display': 'inline-block', 'width': '80%', 'height': '7vh'}, ),
         ], style={'display': 'flex', 'justify-content': 'start', 'align-items': 'center',
                   'padding': '10px 0px', 'width': '95%'},
     )
@@ -64,6 +90,44 @@ def edit_on_off(icon_class, on_style, off_style):
 def device_edit_layout():
     layout = html.Div([
         dcc.Location(id='device-edit', refresh=True),
+        dcc.Store(id='device-edit-store', data={}),  # 데이터를 저장할 숨겨진 Store
+        # 오버레이 배경
+        html.Div(id='device-user-overlay-background', style={
+            'display': 'none',
+            'position': 'fixed',
+            'top': 0,
+            'left': 0,
+            'width': '100%',
+            'height': '100%',
+            'backgroundColor': 'rgba(0, 0, 0, 0.4)',
+            'zIndex': 1
+        }),
+
+        # 오버레이 팝업 창
+        html.Div(id='device-user-overlay-container', children=[
+            html.Div(
+                style={
+                    'background': '#fff',
+                    'border-radius': '30px',
+                    'drop-shadow': '0 4px 4px rgba(0, 0, 0, 0.25)',
+                    'width': '40vh',
+                    'margin': 'auto',
+                    'padding': '20px',
+                    'position': 'relative',
+                    'textAlign': 'center'
+                }, id='device-user-overlay-content')
+        ], style={
+            'display': 'none',
+            'position': 'fixed',
+            # 'top': '10vh',
+            # 'left': '5vw',
+            # 'transform': 'translate(-10vw, -10vh)',
+            'top': '50%',
+            'left': '50%',
+            'transform': 'translate(-50%, -50%)',
+            'zIndex': 2
+        }),
+
         dbc.Container([
             # 상단 영역: 뒤로가기 아이콘과 타이틀
             html.Div([
@@ -97,7 +161,7 @@ def device_edit_layout():
                 children=html.Div([
                 ], id='device-edit-main-content',
                     className="d-flex flex-column justify-content-center align-items-center my-3",
-                    style={'height': '75vh'}),
+                    style={'height': '75vh', 'padding': '0px 20px'}),
             ),
             html.Div([
                 dbc.Button([

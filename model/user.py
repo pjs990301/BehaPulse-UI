@@ -19,3 +19,8 @@ security_question_model = {
     'securityQuestion': fields.String(required=True, description='Security Question'),
     'securityAnswer': fields.String(required=True, description='Security Answer'),
 }
+
+st_token_model = {
+    'stAccessToken': fields.String(required=True, description='SmartThings Access Token'),
+    'stRefreshToken': fields.String(required=True, description='SmartThings Refresh Token'),
+}

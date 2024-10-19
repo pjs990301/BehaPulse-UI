@@ -45,11 +45,17 @@ class RegisterResource(Resource):
         cursor = db.cursor()
 
         try:
+            query = "SELECT * FROM color_brightness WHERE status = %s AND personId = %s"
+            cursor.execute(query, (status, personId))
+            existing_device = cursor.fetchone()
+
+            if existing_device:
+                return {'message': 'ColorBrightness entry already exists.'}, 400
+
             # 색상 및 밝기 등록
             query = "INSERT INTO color_brightness (color, brightness, status, personId) VALUES (%s, %s, %s, %s)"
             cursor.execute(query, (color, brightness, status, personId))
             color_brightness_id = cursor.lastrowid
-
             db.commit()
 
             return {

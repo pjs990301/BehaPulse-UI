@@ -12,6 +12,18 @@ def dashboard_delete_layout():
         dcc.Location(id='dashboard-delete', refresh=True),  # 페이지 이동을 위한 Location
 
         # 오버레이 배경
+        html.Div(id='dashboard-delete-overlay-background', style={
+            'display': 'none',
+            'position': 'fixed',
+            'top': 0,
+            'left': 0,
+            'width': '100%',
+            'height': '100%',
+            'backgroundColor': 'rgba(0, 0, 0, 0.4)',
+            'zIndex': 1
+        }),
+
+        # 오버레이 배경
         html.Div(id='overlay-background', style={
             'display': 'none',
             'position': 'fixed',
@@ -25,12 +37,7 @@ def dashboard_delete_layout():
 
         # 오버레이 팝업 창
         html.Div(id='overlay-container', children=[
-            html.Div([
-                html.Div("길병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='gil-button'),
-                html.Div("아산병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='asan-button'),
-                html.Div("중앙병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'},
-                         id='jungang-button')
-            ], style={
+            html.Div(style={
                 'background': '#fff',
                 'border-radius': '30px',
                 'drop-shadow': '0 4px 4px rgba(0, 0, 0, 0.25)',
@@ -39,7 +46,7 @@ def dashboard_delete_layout():
                 'padding': '20px',
                 'position': 'relative',
                 'textAlign': 'center'
-            })
+            }, id='overlay-content')
         ], style={
             'display': 'none',
             'position': 'fixed',
@@ -99,10 +106,10 @@ def dashboard_delete_layout():
             html.Div([
                 dbc.Row([
                     dbc.Col(
-                        html.Span("미사1동",
+                        html.Span("",
                                   style={'font-weight': 'bold', 'color': '#3F3F3F', 'font-size': '1.5rem',
                                          'justify-content': 'center', 'align-items': 'center',
-                                         'display': 'flex'}),
+                                         'display': 'flex'}, id='main-location'),
                         className="d-flex align-items-center justify-content-center",
                         style={'padding-right': '0.25rem'},
                         width="auto",
@@ -117,7 +124,7 @@ def dashboard_delete_layout():
                         width="auto",
                     ),
 
-                ], className="align-items-center mt-5 mb-3 justify-content-center", )
+                ], className="align-items-center mt-4 mb-3 justify-content-center", )
 
             ],
                 className="d-flex justify-content-start mx-3",
@@ -177,7 +184,8 @@ def dashboard_delete_layout():
 status_colors = {
     "앉아있음": "#DE9200",  # 녹색
     "누워있음": "#FE0135",  # 빨간색
-    "확인불가": "#C5C5C5"  # 회색
+    "비어있음": "#5e97f2",
+    "정보없음": "#C5C5C5"  # 회색
 }
 
 
@@ -230,13 +238,13 @@ def dashboard_delete_content():
     content = html.Div([
         dbc.Row([
             # 제목
-            html.Span("환자 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
+            html.Span("사용자 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
 
             dcc.Loading(
                 id="loading-spinner",
                 type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
                 children=html.Div(id='dashboard-rows', className='w-100 mb-3',
-                                  style={'height': '65vh', 'overflow-y': 'auto'}, ),
+                                  style={'height': '58vh', 'overflow-y': 'auto'}, ),
             ),
             html.Div([
                 dbc.Button([
@@ -249,7 +257,14 @@ def dashboard_delete_content():
                     html.I(className='ic-person-remove me-1', style={'width': '2rem', 'height': '2rem'}),
                     html.Span("인원삭제", style={'font-size': '1rem', 'font-weight': 'bold'})
                 ], color="danger", id='dashboard-delete-button-confirm')
-            ], className='d-flex w-100 p-0', style={'justify-content': 'space-between'})
+            ], className='d-flex w-100 p-0', style={'justify-content': 'space-between'}),
+            
+            dbc.Button([
+                    # 아이콘과 텍스트를 버튼 안에 배치
+                    html.Span("돌아가기", style={'font-size': '1rem', 'font-weight': 'bold'})
+                ], color="secondary", style={'margin-top': '10px', 'width': '100%'},
+                   id='dashboard-add-button', href='/beha-pulse/main/dashboard/'),
+            
         ], className='w-100'),
     ], className="d-flex align-items-center flex-column mx-3 h-100 w-100 justify-content-center")
 

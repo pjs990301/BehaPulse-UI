@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash.dependencies import Input, Output
 
+
 def dashboard_layout():
     layout = html.Div([
 
@@ -24,12 +25,7 @@ def dashboard_layout():
 
         # 오버레이 팝업 창
         html.Div(id='overlay-container', children=[
-            html.Div([
-                html.Div("길병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='gil-button'),
-                html.Div("아산병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='asan-button'),
-                html.Div("중앙병원", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'},
-                         id='jungang-button')
-            ], style={
+            html.Div(style={
                 'background': '#fff',
                 'border-radius': '30px',
                 'drop-shadow': '0 4px 4px rgba(0, 0, 0, 0.25)',
@@ -38,7 +34,7 @@ def dashboard_layout():
                 'padding': '20px',
                 'position': 'relative',
                 'textAlign': 'center'
-            })
+            }, id='overlay-content')
         ], style={
             'display': 'none',
             'position': 'fixed',
@@ -57,10 +53,10 @@ def dashboard_layout():
             html.Div([
                 dbc.Row([
                     dbc.Col(
-                        html.Span("미사1동",
+                        html.Span("",
                                   style={'font-weight': 'bold', 'color': '#3F3F3F', 'font-size': '1.5rem',
                                          'justify-content': 'center', 'align-items': 'center',
-                                         'display': 'flex'}),
+                                         'display': 'flex'}, id='main-location'),
                         className="d-flex align-items-center justify-content-center",
                         style={'padding-right': '0.25rem'},
                         width="auto",
@@ -75,12 +71,25 @@ def dashboard_layout():
                         width="auto",
                     ),
 
-                ], className="align-items-center mt-5 mb-3 justify-content-center", )
+                ], className="align-items-center mt-4 mb-3 justify-content-center", )
 
             ],
                 className="d-flex justify-content-start mx-3",
             ),
-        ]),
+            html.Div(
+                dbc.Button([
+                    # 아이콘과 텍스트를 버튼 안에 배치
+                    html.Span("장비 미등록 인원", style={'font-size': '1rem', 'font-weight': 'bold'})
+                ], color="secondary mt-5 mb-3", id='dashboard-show-non-connted',
+                    href='/beha-pulse/main/dashboard/not-connected/',
+                    style={'width': '20vh', 'height': '5vh', 'display': 'flex',
+                           'justify-content': 'center', 'text-align': 'center', 'align-items': 'center'}
+                ),
+                style={'display': 'flex', 'justify-content': 'center',
+                       'align-items': 'center', 'margin-left': '20px'},
+                className=''
+            )
+        ], className='d-flex justify-content-between align-items-center'),
 
         # 중앙 영역
         dbc.Container([
@@ -131,10 +140,12 @@ def dashboard_layout():
 
     return layout
 
+
 status_colors = {
     "앉아있음": "#DE9200",  # 녹색
     "누워있음": "#FE0135",  # 빨간색
-    "확인불가": "#C5C5C5"  # 회색
+    "비어있음": "#5e97f2",
+    "정보없음": "#C5C5C5"  # 회색
 }
 
 
@@ -178,16 +189,15 @@ def dashboard_item(personId, name, gender, birth, status):
 def dashboard_content():
     content = html.Div([
         dcc.Store(id='dashboard-data-store', data={}),  # 데이터를 저장할 숨겨진 Store
-        html.Div(id='dummy-output', style={'display': 'none'}),  # Dummy Output 추가
         dbc.Row([
             # 제목
-            html.Span("환자 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
+            html.Span("장치 사용자 정보", style={'font-size': '1.25rem', 'font-weight': 'bold', 'padding': '0px'}),
 
             dcc.Loading(
                 id="loading-spinner",
                 type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
                 children=html.Div(id='dashboard-rows', className='w-100 mb-3',
-                                  style={'height': '65vh', 'overflow-y': 'auto'}, ),
+                                  style={'height': '63vh', 'overflow-y': 'auto'}, ),
             ),
 
             html.Div([

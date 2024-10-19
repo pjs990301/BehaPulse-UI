@@ -49,6 +49,59 @@ def info_row(icon_class, label, value, status=None):
 def device_detail_layout():
     layout = html.Div([
         dcc.Location(id='device-detail', refresh=True),
+
+        # 오버레이 배경
+        html.Div(id='device-overlay-background', style={
+            'display': 'none',
+            'position': 'fixed',
+            'top': 0,
+            'left': 0,
+            'width': '100%',
+            'height': '100%',
+            'backgroundColor': 'rgba(0, 0, 0, 0.4)',
+            'zIndex': 1
+        }),
+
+        # 오버레이 팝업 창
+        html.Div(id='device-delete-overlay-container', children=[
+            html.Div([
+                html.Div(style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer'}, id='device-delete-overlay-text'),
+                html.Div([
+                    html.Div([
+                        html.Div("확인", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer',
+                                              'background': '#003CFF', 'width': '40%', 'border-radius': '8px',
+                                              'color': '#fff'},
+                                 id='device-delete-confirm-button'),
+                        html.Div("취소", style={'font-size': '18px', 'padding': '10px', 'cursor': 'pointer',
+                                              'background': '#D5D5D5', 'width': '40%', 'border-radius': '8px',
+                                              'color': '#fff'},
+                                 id='device-delete-cancel-button')
+                    ], style={'display': 'flex', 'width': '90%', 'justify-content': 'space-around'}),
+                ],
+                    style={'display': 'flex', 'width': '100%', 'justify-content': 'center', 'margin-top': '20px'},
+                )
+            ], style={
+                'background': '#fff',
+                'border-radius': '30px',
+                'drop-shadow': '0 4px 4px rgba(0, 0, 0, 0.25)',
+                'width': '40vh',
+                'margin': 'auto',
+                'padding': '20px',
+                'position': 'relative',
+                'textAlign': 'center'
+            }, id='device-delete-overlay-content')
+        ], style={
+            'display': 'none',
+            'position': 'fixed',
+            # 'top': '10vh',
+            # 'left': '5vw',
+            # 'transform': 'translate(-10vw, -10vh)',
+            'top': '50%',
+            'left': '50%',
+            'transform': 'translate(-50%, -50%)',
+            'zIndex': 2
+        }),
+
         dbc.Container([
             # 상단 영역: 뒤로가기 아이콘과 타이틀
             html.Div([
@@ -81,7 +134,7 @@ def device_detail_layout():
                 type="circle",  # 다른 스피너 유형을 원할 경우 변경 가능
                 children=html.Div(id='device-detail-main-content',
                                   className="d-flex flex-column justify-content-center align-items-center my-3",
-                                  style={'height': '75vh'}),
+                                  style={'height': '75vh', 'padding':'0px 20px'}),
             ),
             html.Div([
                 dbc.Button([

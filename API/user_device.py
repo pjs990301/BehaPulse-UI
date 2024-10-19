@@ -263,6 +263,8 @@ class GetUserDeivceWithDetailsResource(Resource):
             # 딕셔너리 목록을 반환하여 간소화
             return {'user_devices': [
                 {
+                    'location': device['install_location'],
+                    'room': device['room'],
                     'macAddress': device['macAddress'],
                     'type': device['type'],
                     'on_off': device['on_off']
@@ -275,3 +277,42 @@ class GetUserDeivceWithDetailsResource(Resource):
         finally:
             db.close()
             cursor.close()
+
+@user_device_ns.route('/user_devices_with_location/<string:userEmail>')
+class GetUserDeviceWithLocationResource(Resource):
+    def get(self, userEmail):
+        """
+        특정 유저의 모든 디바이스와 위치 정보 조회 (JOIN 사용)
+        """
+        # 데이터베이스 연결
+        db = mysql.connector.connect(
+            host=db_config['Database']['host'],
+            user=db_config['Database']['user'],
+            password=db_config['Database']['password'],
+            database=db_config['Database']['database'],
+            auth_plugin='mysql_native_password'
+        )
+        cursor = db.cursor(dictionary=True)
+
+        try:
+            query = """ SELECT d.install_location
+                              FROM user_device ud
+                              JOIN device d ON ud.deviceId = d.deviceId
+                              WHERE ud.userEmail = %s
+                       """
+            cursor.execute(query, (userEmail,))
+            devices = cursor.fetchall()
+
+            if not devices:
+                return {'message': 'No user devices found'}, 404
+                # 장치 데이터를 리스트에 추가
+
+            # 유니크한 장소의 이름만 목록으로 return
+            return {'location': list(set([device['install_location'] for device in devices]))}, 200
+
+        except Exception as e:
+            return {'message': str(e)}, 500
+        finally:
+            db.close()
+            cursor.close()
+

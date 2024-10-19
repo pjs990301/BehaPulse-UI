@@ -3,7 +3,7 @@
     height: 20vh;
     overflow: hidden;
     border-radius: 50%;
-    background-color: #d3d3d3;
+    /*background-color: #d3d3d3;*/
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,11 +15,68 @@
     background: rgba(235, 235, 235, 0.1);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
-    height: 15vh;
+    min-height: 15vh;
 
 }
 .main-card-container {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#main-sensitivity-lying-slider .rc-slider-rail,
+#main-sensitivity-empty-slider .rc-slider-rail,
+#main-sensitivity-sitting-slider .rc-slider-rail
+{
+  background-color: #D9D9D9;
+  height: 10px;
+}
+
+#main-sensitivity-lying-slider .rc-slider-track,
+#main-sensitivity-empty-slider .rc-slider-track,
+#main-sensitivity-sitting-slider .rc-slider-track 
+
+{
+  background-color: #A9A9A9;
+  height: 10px;
+}
+
+#main-sensitivity-lying-slider .rc-slider-handle,
+#main-sensitivity-empty-slider .rc-slider-handle,
+#main-sensitivity-sitting-slider .rc-slider-handle
+{
+  border-radius: 0px;
+  border: 1px solid #000000;
+  background-color: #000000;
+  width: 20px;
+  height: 20px;
+}
+
+#main-sensitivity-lying-slider .rc-slider-handle:hover, #main-sensitivity-lying-slider .rc-slider-handle:active, 
+#main-sensitivity-empty-slider .rc-slider-handle:hover, #main-sensitivity-empty-slider .rc-slider-handle:active, 
+#main-sensitivity-sitting-slider .rc-slider-handle:hover, #main-sensitivity-sitting-slider .rc-slider-handle:active 
+{
+  border: 1px solid #000000;
+  background-color: #000000;
+}
+
+#main-sensitivity-lying-slider .rc-slider-handle:focus,
+#main-sensitivity-empty-slider .rc-slider-handle:focus, 
+#main-sensitivity-sitting-slider .rc-slider-handle:focus 
+{
+  box-shadow: none;
+}
+
+#main-sensitivity-lying-slider .rc-slider-dot-active,
+#main-sensitivity-empty-slider .rc-slider-dot-active,
+#main-sensitivity-sitting-slider .rc-slider-dot-active
+{
+  display: none;
+}
+
+#main-sensitivity-lying-slider .rc-slider-dot,
+#main-sensitivity-empty-slider .rc-slider-dot,
+#main-sensitivity-sitting-slider .rc-slider-dot 
+{
+  display: none;
 }

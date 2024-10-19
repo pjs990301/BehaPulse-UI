@@ -27,11 +27,12 @@ def login_controller(app):
                 return [{'success': False, 'message': '로그인 정보를 입력해주세요.'}, None]
             else:
                 # 로그인 인증 요청
-                api_url = f"http://{server['server']['host']}:{server['server']['port']}/user/login"
+                api_url = f'{server["server"]["protocol"]}://{server["server"]["host"]}:{server["server"]["port"]}/user/login'
                 try:
                     response = requests.post(
                         api_url,
-                        json={'userEmail': login_id, 'userPassword': login_password}
+                        json={'userEmail': login_id, 'userPassword': login_password},
+                        verify=server["server"]["verify"]
                     )
 
                     # 로그인 성공 시 메인 페이지로 리디렉션

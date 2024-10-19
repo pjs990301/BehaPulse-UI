@@ -48,7 +48,7 @@ def more_help_step_1_content():
             ], style={'height': '20vh', 'display': 'flex', 'align-items': 'center',
                       'justify-content': 'end'}),
             html.Div(  # 텍스트 콘텐츠
-                html.Span(["BehaPulse는", html.Br(), "Wi-Fi sensing으로", html.Br(), "환자의 상태를", html.Br(), "모니터링 합니다."],
+                html.Span(["BehaPulse는", html.Br(), "Wi-Fi sensing으로", html.Br(), "사용자의 상태를", html.Br(), "모니터링 합니다."],
                           style={'font-size': '3vh', 'color': 'white', 'font-weight': 'bold'}),
                 style={'height': '30vh', 'display': 'flex', 'align-items': 'end', 'margin-left': '5vh'}),
         ],

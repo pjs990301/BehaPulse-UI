@@ -1,7 +1,6 @@
 from .signup import *
 from .splash import *
 from .login import *
-from templates.page.layout.content.main.main import *
 from .content import *
 from .find_id import *
 from .find_pw import *
@@ -15,7 +14,9 @@ url_to_layout = {
     '/beha-pulse/find-id/': find_id_layout,
     '/beha-pulse/find-password/': find_pw_layout,
 }
-
+main_layout_content = {
+    '/beha-pulse/main/sensitivity/': main_sensitivity_layout,
+}
 device_layout_content = {
     '/beha-pulse/main/device/add/': device_add_layout,
     '/beha-pulse/main/device/edit/': device_edit_layout,
@@ -23,12 +24,15 @@ device_layout_content = {
 }
 
 control_layout_content = {
+    '/beha-pulse/main/control/setting/': control_setting_layout,
     '/beha-pulse/main/control/color/': control_color_layout,
 }
 
 dashboard_layout_content = {
     '/beha-pulse/main/dashboard/add/': dashboard_add_layout,
     '/beha-pulse/main/dashboard/delete/': dashboard_delete_layout,
+    '/beha-pulse/main/dashboard/not-connected/': dashboard_not_connected_layout,
+    '/beha-pulse/main/dashboard/detail/': dashboard_detail_layout,
 }
 
 more_layout_content = {
@@ -36,7 +40,11 @@ more_layout_content = {
     '/beha-pulse/main/more/document/': more_document_layout,
     '/beha-pulse/main/more/information/': more_info_layout,
     '/beha-pulse/main/more/help/': more_help_layout,
+    '/beha-pulse/main/more/password/': more_password_change_layout,
+    '/beha-pulse/main/more/sensitivity/': more_sensitivity_layout,
+    '/beha-pulse/main/more/smart-things/': more_smart_things_layout,
 }
+
 
 tab_to_layout = {
     '/beha-pulse/main/': main_layout,
@@ -58,7 +66,7 @@ not_need_login_layout = [
 def set_layout(app):
     @app.callback(
         [Output('page', 'children'),
-         Output('redirect', 'href')],
+         Output('redirect', 'href', allow_duplicate=True)],
         [Input('url', 'pathname')],
         prevent_initial_call=True
     )
@@ -80,11 +88,14 @@ def set_layout(app):
 
             else:  # 로그인이 되어 있는 데 로그인이 필요한 레이아웃을 요청한 경우
                 if pathname in tab_to_layout:
-                    print(1)
+                    print(0)
                     layout = tab_to_layout.get(pathname)()
+                elif pathname in main_layout_content:
+                    print(1)
+                    layout = main_layout_content.get(pathname)()
                 elif pathname in device_layout_content:
                     print(2)
-                    layout = device_layout_content.get(pathname, device_layout)()
+                    layout = device_layout_content.get(pathname)()
                 elif pathname in control_layout_content:
                     print(3)
                     layout = control_layout_content.get(pathname)()
@@ -97,5 +108,5 @@ def set_layout(app):
 
                 else:  # 로그인이 되어있는 데, 정해지지 않은 URL로 요청한 경우
                     redirect_url = '/beha-pulse/main/'
-
+        print(session)
         return layout, redirect_url
