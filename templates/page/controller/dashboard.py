@@ -490,7 +490,7 @@ def dashboard_controller(app):
                                                                'display': 'flex', 'align-itmes': 'center',
                                                                'justify-content': 'center'})]
                 else:
-                    dashboard_row.append(no_row_item(initial=True))
+                    dashboard_row.append(no_row_item(initial=False))
                     return [html.Div(dashboard_row, style={'width': '100%', 'height': '100%',
                                                            'display': 'flex', 'align-itmes': 'center',
                                                            'justify-content': 'center'})]
