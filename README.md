@@ -159,7 +159,26 @@ BehaPulse-UI/
       }
     }
     ```
-2. 애플리케이션을 실행합니다:
+1. `config/server.json`에서 서버 구성이 올바르게 설정되었는지 확인합니다. 다음의 예시를 참고해서 작성하세요:
+    ```json
+    {
+        "server" : {
+            "bind-host": "bind-host. ex) 0.0.0.0",
+            "ssl-cert-pem": "cert-pem-file-path.pem",
+            "ssl-key-pem": "key-pem-file-path.pem",
+            "host": "flask-api-server-ip",
+            "port": 443,
+            "protocol":"flask-api-protocol. ex) https",
+            "verify": false
+        },
+        "smartthings" : {
+            "CLIENT_ID": "smartthings-oauth-client-id",
+            "CLIENT_SECRET": "smartthings-oauth-client-secret",
+            "redirect-host": "smartthings-oauth-redirect-host"
+        }
+    }
+    ```
+3. 애플리케이션을 실행합니다:
     ```sh
     python app.py
     ```
@@ -195,6 +214,20 @@ create table dashboard
 )
     charset = utf8mb3;
 
+create table color_brightness
+(
+    id         int auto_increment
+        primary key,
+    color      varchar(255) not null,
+    brightness int          not null,
+    status     varchar(255) not null,
+    personId   int          not null,
+    constraint color_brightness_dashboard_fk
+        foreign key (personId) references dashboard (personId)
+            on update cascade on delete cascade
+)
+    charset = utf8mb3;
+
 create table device
 (
     deviceId         int auto_increment
@@ -209,17 +242,50 @@ create table device
 )
     charset = utf8mb3;
 
-create table user
+create table state_inference
 (
-    userEmail        varchar(255)                        not null
+    stateInferenceId int auto_increment
         primary key,
-    userPassword     varchar(255)                        not null,
-    userName         varchar(255)                        not null,
-    createdAt        timestamp default CURRENT_TIMESTAMP null,
-    securityQuestion varchar(255)                        not null,
-    securityAnswer   varchar(255)                        not null
+    inferencedStatus varchar(255) not null,
+    inferenceTime    datetime     not null,
+    personId         int          not null,
+    constraint state_inference_dashboard_fk
+        foreign key (personId) references dashboard (personId)
+            on update cascade on delete cascade
 )
     charset = utf8mb3;
+
+create table user
+(
+    userEmail        varchar(255)                                      not null
+        primary key,
+    userPassword     varchar(255)                                      not null,
+    userName         varchar(255)                                      not null,
+    createdAt        timestamp               default CURRENT_TIMESTAMP null,
+    securityQuestion varchar(255)                                      not null,
+    securityAnswer   varchar(255)                                      not null,
+    userGender       enum ('male', 'female') default 'male'            not null,
+    birthday         date                                              null,
+    stAccessToken    varchar(64)                                       null,
+    stRefreshToken   varchar(64)                                       null
+)
+    charset = utf8mb3;
+
+create table sensitivity
+(
+    id           int auto_increment
+        primary key,
+    userEmail    varchar(255)  not null,
+    targetStatus varchar(50)   null,
+    weight       decimal(3, 1) null,
+    constraint sensitivity_ibfk_1
+        foreign key (userEmail) references user (userEmail)
+            on update cascade on delete cascade
+)
+    charset = utf8mb3;
+
+create index userEmail
+    on sensitivity (userEmail);
 
 create table user_dashboard
 (
@@ -277,4 +343,4 @@ create index idx_user_device_userEmail_deviceId
 </details>
 
 ## 라이선스
-이 프로젝트는 MIT 라이선스에 따라 라이선스가 부여됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하십시오.
+이 프로젝트는 BSD 3 라이선스에 따라 라이선스가 부여됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하십시오.
